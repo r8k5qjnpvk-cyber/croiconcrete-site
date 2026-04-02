@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://croiconcrete.co.uk/sitemap.xml

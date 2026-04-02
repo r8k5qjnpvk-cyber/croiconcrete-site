@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page Not Found | Croi Concrete</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#2a2520;
+    --cream:#f5f0eb;
+    --warm-white:#faf8f5;
+    --accent:#8b7355;
+    --concrete:#9e9589;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Lato',sans-serif;background:var(--warm-white);color:var(--dark);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
+  .container{text-align:center;max-width:600px;}
+  h1{font-family:'Cormorant Garamond',serif;font-size:8rem;font-weight:300;color:var(--accent);margin-bottom:1rem;line-height:1;}
+  h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin-bottom:1rem;}
+  p{color:var(--concrete);line-height:1.8;margin-bottom:2rem;font-size:0.95rem;}
+  .btn-group{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+  a{display:inline-block;background:var(--dark);color:var(--cream);text-decoration:none;padding:0.82rem 2rem;font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;border-radius:2px;transition:background 0.2s;}
+  a:hover{background:var(--accent);}
+  a.secondary{background:transparent;color:var(--dark);border:1px solid var(--dark);}
+  a.secondary:hover{background:var(--dark);color:var(--cream);}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>404</h1>
+    <h2>Page not found</h2>
+    <p>The page you're looking for doesn't exist. It might have been moved, deleted, or the link may be incorrect.</p>
+    <div class="btn-group">
+      <a href="/">Back to Home</a>
+      <a href="/#shop" class="secondary">Browse Products</a>
+    </div>
+  </div>
+</body>
+</html>
