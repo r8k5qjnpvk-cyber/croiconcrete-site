@@ -575,6 +575,8 @@
 const SQUARE_APP_ID      = 'sq0idp-lxnxMVcZXgCwGeBsvoUWlw';
 const SQUARE_LOCATION_ID = 'L585ZRYRYWNPD';
 const ETSY_SHOP = 'https://www.etsy.com/shop/CroiConcrete';
+const ETSY_SHOP_ID = 56714168;
+const ETSY_API_KEY = 'ga12dfsd8wnbdec7im6f4ub1:26hhjm1cc4';
 
 let card = null, currentListing = null, squareLoaded = false;
 let allListings = [];
@@ -897,22 +899,29 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-async function loadListings(attempt = 1) {
+async function loadListings() {
   try {
-    const res = await fetch('/listings');
+    // Call Etsy API directly (public endpoint, no OAuth needed)
+    const listUrl = `https://openapi.etsy.com/v3/application/shops/${ETSY_SHOP_ID}/listings/active?limit=100`;
+    const res = await fetch(listUrl, { headers: { 'x-api-key': ETSY_API_KEY } });
     if (!res.ok) {
       if (res.status === 429) throw new Error('Too many requests. Please try again in a moment.');
-      if (res.status === 503) throw new Error('Service temporarily unavailable. Please try again.');
-      if (res.status === 404 && attempt <= 2) {
-        await new Promise(r => setTimeout(r, 1500));
-        return loadListings(attempt + 1);
-      }
       throw new Error(`Unable to load products (Error ${res.status})`);
     }
     const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    const listings = Array.isArray(data) ? data : [];
+    const listings = data.results || [];
     if (!listings.length) throw new Error('No products available at the moment. Check back soon!');
+
+    // Fetch images for all listings concurrently
+    await Promise.all(listings.map(async (l) => {
+      try {
+        const imgRes = await fetch(
+          `https://openapi.etsy.com/v3/application/listings/${l.listing_id}/images`,
+          { headers: { 'x-api-key': ETSY_API_KEY } }
+        );
+        l.images = imgRes.ok ? (await imgRes.json()).results || [] : [];
+      } catch { l.images = []; }
+    }));
     
     allListings = listings;
     filteredListings = [...listings];
