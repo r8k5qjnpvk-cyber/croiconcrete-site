@@ -2,32 +2,69 @@ export async function onRequest(context) {
   const keystring    = context.env.ETSY_API_KEY;
   const sharedSecret = context.env.ETSY_SHARED_SECRET;
   const shopId       = 56714168;
-  const apiKey       = `${keystring}:${sharedSecret}`;
-  const headers      = { 'x-api-key': apiKey };
-  
-  const CACHE_TTL = 300; // 5 minutes
+
+  // Validate env vars are present
+  if (!keystring || !sharedSecret) {
+    return new Response(JSON.stringify({ 
+      error: 'API credentials not configured',
+      detail: 'ETSY_API_KEY or ETSY_SHARED_SECRET missing from environment'
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
+  }
+
+  // Etsy v3 requires keystring:sharedSecret format
+  const apiKey  = `${keystring}:${sharedSecret}`;
+  const headers = { 'x-api-key': apiKey };
+  const CACHE_TTL = 300;
+
+  // Handle CORS preflight
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
+  }
 
   try {
-    const listRes = await fetch(
-      `https://openapi.etsy.com/v3/application/shops/${shopId}/listings/active?limit=100`,
-      { headers }
-    );
-    if (!listRes.ok) throw new Error(`Listings failed ${listRes.status}`);
+    // Use findAllActiveListingsByShop endpoint (public, no OAuth needed)
+    const listUrl = `https://openapi.etsy.com/v3/application/shops/${shopId}/listings/active?limit=100`;
+    const listRes = await fetch(listUrl, { headers });
+
+    if (!listRes.ok) {
+      const errBody = await listRes.text();
+      console.error(`Etsy listings API error: ${listRes.status}`, errBody);
+      throw new Error(`Etsy API returned ${listRes.status}: ${errBody.substring(0, 200)}`);
+    }
+
     const { results: listings } = await listRes.json();
 
-    // Fetch images concurrently for all listings
-    await Promise.all(listings.map(async l => {
+    if (!listings || !listings.length) {
+      return new Response(JSON.stringify([]), {
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
+    // Fetch images concurrently (with timeout protection)
+    await Promise.all(listings.map(async (l) => {
       try {
-        const r = await fetch(
-          `https://openapi.etsy.com/v3/application/listings/${l.listing_id}/images`,
-          { headers }
-        );
+        const imgUrl = `https://openapi.etsy.com/v3/application/listings/${l.listing_id}/images`;
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const r = await fetch(imgUrl, { headers, signal: controller.signal });
+        clearTimeout(timeout);
         l.images = r.ok ? (await r.json()).results || [] : [];
-      } catch { l.images = []; }
+      } catch {
+        l.images = [];
+      }
     }));
 
     return new Response(JSON.stringify(listings), {
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Cache-Control': `public, max-age=${CACHE_TTL}`,
@@ -35,9 +72,10 @@ export async function onRequest(context) {
       }
     });
   } catch (err) {
+    console.error('Listings function error:', err);
     return new Response(JSON.stringify({ error: err.message }), { 
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      status: 502,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
     });
   }
 }

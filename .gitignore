@@ -1,2 +1,29 @@
 # Local Netlify folder
 .netlify
+
+# Cloudflare
+.wrangler
+
+# Deployment artifacts
+*.zip
+croiconcrete-deploy.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc docs that shouldn't be in prod
+ACTUAL-FIX.md
+COMPREHENSIVE_ANALYSIS.md
+DEPLOYMENT_CHECKLIST.md
+DEPLOYMENT_STATUS.md
+ETSY_API_FIX.md
+EXECUTIVE_SUMMARY.md
+FINAL_STEPS.md
+FIX-ETSY-LISTINGS.md
+IMAGE_CREATION_GUIDE.md
+IMPLEMENTATION_CHECKLIST.md
+QUICK_FIX_GITHUB.md
+
+# Deploy scripts (keep locally, don't deploy)
+*.sh
