@@ -397,6 +397,21 @@
     .strip{flex-wrap:wrap;gap:0.8rem;}
     .back-to-top{bottom:1.5rem;right:1.5rem;width:44px;height:44px;}
   }
+
+  /* Skip to content (accessibility) */
+  .skip-link{position:absolute;top:-100px;left:1rem;background:var(--dark);color:var(--cream);padding:0.6rem 1.2rem;font-size:0.75rem;border-radius:2px;text-decoration:none;z-index:9999;transition:top 0.2s;}
+  .skip-link:focus{top:1rem;}
+
+  /* Print styles */
+  @media print {
+    nav,.strip,.trust-strip,.newsletter,.cookie-banner,.back-to-top,
+    .modal-bg,.post-bg,.filter-bar,.sort-select,#blog{display:none!important;}
+    body{background:#fff;color:#000;}
+    .product-card{break-inside:avoid;border:1px solid #ccc;}
+    a[href]::after{content:" (" attr(href) ")";font-size:0.7rem;color:#666;}
+    .hero{grid-template-columns:1fr;gap:1rem;}
+    .hero-visual{display:none;}
+  }
 </style>
 
 <!-- Google Analytics 4 — replace G-XXXXXXXXXX with your actual GA4 measurement ID -->
@@ -414,6 +429,7 @@
 <!-- <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_CLOUDFLARE_BEACON_TOKEN"}'></script> -->
 </head>
 <body>
+<a href="#shop" class="skip-link">Skip to products</a>
 
 <nav>
   <a href="/" class="nav-logo" aria-label="Croi Concrete Home">Croi Concrete</a>
@@ -647,6 +663,7 @@
         <div class="payment-status" id="payment-status"></div>
         <button class="pay-btn" id="pay-btn" onclick="handlePayment()">Pay now</button>
         <a href="#" class="etsy-link-btn" id="etsy-link" target="_blank" rel="noopener">Or buy on Etsy instead →</a>
+        <button class="etsy-link-btn" id="share-btn" onclick="shareProduct()" style="margin-top:0.5rem;width:100%;cursor:pointer;background:none;">Share this product</button>
         <p class="sq-notice" id="sq-notice"></p>
       </div>
     </div>
@@ -1152,9 +1169,43 @@ function renderListings(listings) {
     }));
   });
   window._listings = listings;
-}
 
-// ── PRODUCT MODAL ──
+  // Inject ItemList schema for Google rich results — reads from already-loaded data
+  const existingSchema = document.getElementById('schema-itemlist');
+  if (existingSchema) existingSchema.remove();
+  const schema = document.createElement('script');
+  schema.type = 'application/ld+json';
+  schema.id = 'schema-itemlist';
+  schema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Croi Concrete Handmade Homeware Collection",
+    "url": "https://croiconcrete.co.uk/",
+    "numberOfItems": listings.length,
+    "itemListElement": listings.slice(0, 20).map((l, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "item": {
+        "@type": "Product",
+        "name": l.title || '',
+        "url": l.url || 'https://croiconcrete.co.uk/',
+        "image": getImage(l) || '',
+        "description": (l.description || '').substring(0, 160),
+        "brand": {"@type": "Brand", "name": "Croi Concrete"},
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": l.price?.currency_code || "GBP",
+          "price": l.price ? (l.price.amount / (l.price.divisor || 100)).toFixed(2) : "0",
+          "availability": (l.quantity > 0 || l.quantity === null)
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+          "url": l.url || 'https://croiconcrete.co.uk/'
+        }
+      }
+    }))
+  });
+  document.head.appendChild(schema);
+}
 async function openModal(listingId) {
   const listing = window._listings?.find(l => l.listing_id === listingId);
   if (!listing) return;
@@ -1227,6 +1278,26 @@ async function openModal(listingId) {
 function closeModal() {
   document.getElementById('modal-bg').classList.remove('open');
   document.body.style.overflow = '';
+}
+
+async function shareProduct() {
+  if (!currentListing) return;
+  const shareData = {
+    title: currentListing.title || 'Croi Concrete',
+    text: `Check out this handmade concrete homeware from Croi Concrete: ${currentListing.title}`,
+    url: currentListing.url || 'https://croiconcrete.co.uk/'
+  };
+  const btn = document.getElementById('share-btn');
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      await navigator.clipboard.writeText(shareData.url);
+      const orig = btn.textContent;
+      btn.textContent = 'Link copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    }
+  } catch(e) { /* user cancelled share */ }
 }
 
 function switchModalImage(src, thumbEl) {
