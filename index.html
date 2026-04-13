@@ -713,6 +713,10 @@
         <a href="#" class="etsy-link-btn" id="etsy-link" target="_blank" rel="noopener">Or buy on Etsy instead →</a>
         <button class="etsy-link-btn" id="share-btn" onclick="shareProduct()" style="margin-top:0.5rem;width:100%;cursor:pointer;background:none;">Share this product</button>
         <p class="sq-notice" id="sq-notice"></p>
+        <div class="modal-related" id="modal-related" style="display:none;">
+          <div class="modal-related-title">You might also like</div>
+          <div class="modal-related-grid" id="modal-related-grid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1362,6 +1366,25 @@ async function openModal(listingId) {
   const sqConfigured = SQUARE_APP_ID !== 'YOUR_SQUARE_APP_ID';
   document.getElementById('sq-notice').textContent = sqConfigured ? 'Payments secured by Square' : '';
   document.getElementById('pay-btn').style.display = sqConfigured ? 'block' : 'none';
+
+  // Related products — 3 others from already-loaded allListings, no API calls
+  const related = allListings.filter(l => l.listing_id !== listingId).slice(0, 3);
+  const relatedEl = document.getElementById('modal-related');
+  const relatedGrid = document.getElementById('modal-related-grid');
+  if (related.length > 0) {
+    relatedGrid.innerHTML = related.map(r => {
+      const rImg = getImage(r);
+      const rPrice = formatPrice(r);
+      return rImg ? `<div class="modal-related-item" onclick="openModal(${r.listing_id})">
+        <img src="${rImg}" alt="${esc(r.title||'')}" loading="lazy">
+        <span>${rPrice}</span>
+      </div>` : '';
+    }).filter(Boolean).join('');
+    relatedEl.style.display = related.length > 0 ? 'block' : 'none';
+  } else {
+    relatedEl.style.display = 'none';
+  }
+
   document.getElementById('modal-bg').classList.add('open');
   document.body.style.overflow = 'hidden';
   
