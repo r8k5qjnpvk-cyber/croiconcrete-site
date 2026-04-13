@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handmade Concrete Planters, Coasters & Homeware | Croi Concrete UK</title>
-    <meta name="description" content="Shop handmade concrete homeware crafted in Newcastle upon Tyne. Unique concrete planters, coasters, and desk accessories — perfect as gifts or for your home. Buy direct or on Etsy.">
-    <link rel="canonical" href="https://croiconcrete.co.uk/">
+    <title>Croi Concrete | Handmade Concrete Homeware</title>
+    <meta name="description" content="Discover unique handmade concrete homeware crafted in Newcastle upon Tyne. Modern planters, stylish coasters, and functional desk accessories.">
     
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -14,20 +13,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     
     <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Croi Concrete">
-    <meta property="og:title" content="Handmade Concrete Planters, Coasters & Homeware | Croi Concrete">
-    <meta property="og:description" content="Unique handmade concrete homeware crafted in Newcastle upon Tyne. Planters, coasters and desk accessories — shop direct or on Etsy.">
+    <meta property="og:title" content="Croi Concrete | Handmade Concrete Homeware">
+    <meta property="og:description" content="Unique handmade concrete pieces for your home">
     <meta property="og:image" content="https://croiconcrete.co.uk/og-image.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
     <meta property="og:url" content="https://croiconcrete.co.uk">
-    <!-- Twitter / X Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@croiconcrete">
-    <meta name="twitter:title" content="Handmade Concrete Planters, Coasters & Homeware | Croi Concrete">
-    <meta name="twitter:description" content="Unique handmade concrete homeware crafted in Newcastle upon Tyne. Planters, coasters and desk accessories.">
-    <meta name="twitter:image" content="https://croiconcrete.co.uk/og-image.jpg">
     
     <style>
         * {
@@ -381,11 +370,6 @@
             color: var(--dark);
         }
         
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
         .error {
             text-align: center;
             padding: 2rem;
@@ -427,50 +411,6 @@
             opacity: 1;
         }
         
-        /* Mobile hamburger */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 4px;
-        }
-        
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
-        
-        .mobile-nav {
-            display: none;
-            flex-direction: column;
-            background: white;
-            border-top: 1px solid var(--light);
-            padding: 0.5rem 2rem 1rem;
-        }
-        
-        .mobile-nav a {
-            padding: 0.75rem 0;
-            text-decoration: none;
-            color: var(--primary);
-            font-weight: 500;
-            border-bottom: 1px solid var(--light);
-        }
-        
-        .mobile-nav a:last-child {
-            border-bottom: none;
-        }
-        
-        .mobile-nav.open {
-            display: flex;
-        }
-
         @media (max-width: 768px) {
             .modal-body {
                 grid-template-columns: 1fr;
@@ -488,10 +428,6 @@
             .nav-links {
                 display: none;
             }
-            
-            .hamburger {
-                display: flex;
-            }
         }
     </style>
 </head>
@@ -504,14 +440,6 @@
                 <a href="#about">About</a>
                 <a href="#contact">Contact</a>
             </div>
-            <button class="hamburger" onclick="toggleMobileNav()" aria-label="Toggle navigation">
-                <span></span><span></span><span></span>
-            </button>
-        </nav>
-        <nav class="mobile-nav" id="mobile-nav">
-            <a href="#products" onclick="toggleMobileNav()">Shop</a>
-            <a href="#about" onclick="toggleMobileNav()">About</a>
-            <a href="#contact" onclick="toggleMobileNav()">Contact</a>
         </nav>
     </header>
 
@@ -521,7 +449,7 @@
     </section>
 
     <div class="container">
-        <div id="products" class="filter-section">
+        <div class="filter-section">
             <h2>Browse Our Collection</h2>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-category="all">All Products</button>
@@ -560,12 +488,12 @@
                     </div>
                     
                     <div class="cta-buttons">
-                        <a id="etsy-link" href="#" target="_blank" rel="noopener" class="btn btn-primary">
+                        <a id="etsy-link" href="#" target="_blank" class="btn btn-primary">
                             Buy on Etsy →
                         </a>
-                        <a id="etsy-link-secondary" href="#" target="_blank" rel="noopener" class="btn btn-secondary">
-                            View all photos &amp; reviews on Etsy
-                        </a>
+                        <button class="btn btn-secondary" onclick="alert('Coming soon! For now, please use the Etsy link above.')">
+                            Add to Basket
+                        </button>
                     </div>
                 </div>
             </div>
@@ -596,25 +524,7 @@
     <script>
         // Dynamic copyright year
         document.getElementById('copyright-year').textContent = new Date().getFullYear();
-
-        // Mobile nav toggle
-        function toggleMobileNav() {
-            document.getElementById('mobile-nav').classList.toggle('open');
-        }
-
-        // Show skeleton loading cards while products fetch
-        function showSkeletons() {            const container = document.getElementById('products-container');
-            container.className = 'products-grid';
-            container.innerHTML = Array(6).fill('').map(() => `
-                <div class="product-card" style="pointer-events:none">
-                    <div class="product-image" style="background:linear-gradient(90deg,#e0e0e0 25%,#f0f0f0 50%,#e0e0e0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite"></div>
-                    <div class="product-info">
-                        <div style="height:16px;background:#e0e0e0;border-radius:4px;margin-bottom:8px;width:80%"></div>
-                        <div style="height:20px;background:#e0e0e0;border-radius:4px;width:40%"></div>
-                    </div>
-                </div>
-            `).join('');
-        }
+        
         let allProducts = [];
         let currentQuantity = 1;
         let currentProduct = null;
@@ -626,18 +536,14 @@
             desk: ['desk', 'organizer', 'holder', 'tray', 'office']
         };
         
-        // Fetch products from Etsy via Cloudflare Worker
+        // Fetch products from Etsy via your Cloudflare Worker
         async function loadProducts() {
-            showSkeletons();
             try {
                 const response = await fetch('https://etsy-proxy.croiconcrete.workers.dev/listings');
                 const data = await response.json();
                 
-                // API returns either a flat array or an object with results
-                const products = Array.isArray(data) ? data : (data.results || []);
-                
-                if (products.length > 0) {
-                    allProducts = products;
+                if (data.results && data.results.length > 0) {
+                    allProducts = data.results;
                     displayProducts(allProducts);
                 } else {
                     document.getElementById('products-container').innerHTML = 
@@ -681,7 +587,7 @@
                 
                 return `
                     <div class="product-card" onclick="openModal(${product.listing_id})" data-category="${categorizeProduct(product.title)}">
-                        <img src="${image}" alt="${product.title}" class="product-image" loading="lazy" width="280" height="280">
+                        <img src="${image}" alt="${product.title}" class="product-image">
                         <div class="product-info">
                             <div class="product-title">${product.title}</div>
                             <div class="product-price">${price}</div>
@@ -716,16 +622,10 @@
             document.getElementById('modal-title').textContent = product.title;
             document.getElementById('modal-price').textContent = 
                 `£${(product.price.amount / product.price.divisor).toFixed(2)}`;
-            // Format description: render newlines and **bold** markdown safely
-            const rawDesc = product.description || 'No description available.';
-            const formattedDesc = rawDesc
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\n/g, '<br>');
-            document.getElementById('modal-description').innerHTML = formattedDesc;
+            document.getElementById('modal-description').textContent = 
+                product.description || 'No description available.';
             document.getElementById('quantity-display').textContent = currentQuantity;
             document.getElementById('etsy-link').href = product.url;
-            document.getElementById('etsy-link-secondary').href = product.url;
             
             // Set up image gallery
             if (product.images && product.images.length > 0) {
