@@ -1213,7 +1213,13 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cookie-banner').classList.add('hidden');
   }
 
-  loadListings();
+  loadListings().then(() => {
+    // After listings load, check if we're on a product URL and show it
+    const productMatch = window.location.pathname.match(/^\/product\/(\d+)/);
+    if (productMatch) {
+      showProductPage(parseInt(productMatch[1]));
+    }
+  });
   renderBlog();
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeModal(); closePost(); }
@@ -1306,6 +1312,10 @@ function renderListings(listings) {
 
     const card = document.createElement('article');
     card.className = 'product-card';
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', (e) => {
+      if (!e.target.closest('button')) navigateToProduct(listing.listing_id);
+    });
     card.setAttribute('itemscope', '');
     card.setAttribute('itemtype', 'https://schema.org/Product');
     const stockAvailable = qty > 0 || qty === null;
@@ -1332,7 +1342,7 @@ function renderListings(listings) {
         ${badge}
         ${favBadge}
         <div class="product-overlay">
-          <button class="product-btn" onclick="openModal(${listing.listing_id})">Buy now</button>
+          <button class="product-btn" onclick="navigateToProduct(${listing.listing_id})">View product</button>
         </div>
       </div>
       <div class="product-title" itemprop="name">${esc(title)}</div>
