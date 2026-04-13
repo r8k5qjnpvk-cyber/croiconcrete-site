@@ -1,32 +1,35 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
 <!-- SEO Meta -->
-<title>Croi Concrete — Handcrafted Concrete Homeware | Newcastle upon Tyne</title>
-<meta name="description" content="Handmade concrete homeware crafted in Newcastle upon Tyne. Shop unique concrete planters, coasters, desk organisers and gifts. Each piece individually hand-poured. Free UK delivery available.">
-<meta name="keywords" content="handmade concrete homeware, concrete gifts UK, concrete planters, concrete coasters, handmade gifts Newcastle, unique homeware gifts, concrete desk organiser">
+<title>Handmade Concrete Planters, Coasters &amp; Homeware | Croi Concrete UK</title>
+<meta name="description" content="Shop handmade concrete homeware crafted in Newcastle upon Tyne. Unique concrete planters, coasters, desk organisers and gifts. Each piece individually hand-poured. Free UK delivery available.">
+<meta name="keywords" content="handmade concrete homeware, concrete gifts UK, concrete planters, concrete coasters, handmade gifts Newcastle, unique homeware gifts, concrete desk organiser, buy concrete homeware">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://croiconcrete.co.uk/">
 
 <!-- Open Graph / Social -->
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Croi Concrete">
 <meta property="og:url" content="https://croiconcrete.co.uk/">
-<meta property="og:title" content="Croi Concrete — Handcrafted Concrete Homeware">
-<meta property="og:description" content="Handmade concrete homeware crafted in Newcastle upon Tyne. Shop unique concrete planters, coasters, desk organisers and gifts.">
+<meta property="og:title" content="Handmade Concrete Planters, Coasters &amp; Homeware | Croi Concrete">
+<meta property="og:description" content="Unique handmade concrete homeware crafted in Newcastle upon Tyne. Planters, coasters and desk accessories — shop direct or on Etsy.">
 <meta property="og:image" content="https://croiconcrete.co.uk/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Croi Concrete — Handcrafted Concrete Homeware">
-<meta name="twitter:description" content="Handmade concrete homeware crafted in Newcastle upon Tyne.">
+<meta name="twitter:title" content="Handmade Concrete Planters, Coasters &amp; Homeware | Croi Concrete">
+<meta name="twitter:description" content="Unique handmade concrete homeware crafted in Newcastle upon Tyne. Planters, coasters and desk accessories.">
 <meta name="twitter:image" content="https://croiconcrete.co.uk/og-image.jpg">
 <meta name="twitter:site" content="@croiconcrete">
 <meta name="twitter:creator" content="@croiconcrete">
@@ -507,7 +510,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© <script>document.write(new Date().getFullYear())</script> Croi Concrete · Handmade in Newcastle upon Tyne</span>
+    <span class="footer-copy">© <span id="footer-year"></span> Croi Concrete · Handmade in Newcastle upon Tyne</span>
     <span style="font-size:0.65rem;color:var(--light-stone);">Concrete homeware · Handmade gifts UK · Newcastle</span>
   </div>
 </footer>
@@ -575,8 +578,8 @@
 const SQUARE_APP_ID      = 'sq0idp-lxnxMVcZXgCwGeBsvoUWlw';
 const SQUARE_LOCATION_ID = 'L585ZRYRYWNPD';
 const ETSY_SHOP = 'https://www.etsy.com/shop/CroiConcrete';
-const ETSY_SHOP_ID = 56714168;
-const ETSY_API_KEY = 'ga12dfsd8wnbdec7im6f4ub1:26hhjm1cc4';
+// Etsy API calls routed via Cloudflare Pages Function — key never exposed in frontend
+const LISTINGS_API = '/functions/listings';
 
 let card = null, currentListing = null, squareLoaded = false;
 let allListings = [];
@@ -892,6 +895,10 @@ function handlePostBgClick(e) {
 
 // ── LOAD LISTINGS ──
 window.addEventListener('DOMContentLoaded', () => {
+  // Set copyright year
+  const fyEl = document.getElementById('footer-year');
+  if (fyEl) fyEl.textContent = new Date().getFullYear();
+  
   loadListings();
   renderBlog();
   document.addEventListener('keydown', e => {
@@ -901,36 +908,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 async function loadListings() {
   try {
-    // Call Etsy API directly (public endpoint, no OAuth needed)
-    const listUrl = `https://openapi.etsy.com/v3/application/shops/${ETSY_SHOP_ID}/listings/active?limit=100`;
-    const res = await fetch(listUrl, { headers: { 'x-api-key': ETSY_API_KEY } });
+    // Route through Cloudflare Pages Function — keeps API key server-side
+    const res = await fetch(LISTINGS_API);
     if (!res.ok) {
       if (res.status === 429) throw new Error('Too many requests. Please try again in a moment.');
       throw new Error(`Unable to load products (Error ${res.status})`);
     }
     const data = await res.json();
-    const listings = data.results || [];
+    // CF Function returns flat array; fallback handles legacy {results:[]} shape
+    const listings = Array.isArray(data) ? data : (data.results || []);
     if (!listings.length) throw new Error('No products available at the moment. Check back soon!');
-
-    // Fetch images for all listings concurrently
-    await Promise.all(listings.map(async (l) => {
-      try {
-        const imgRes = await fetch(
-          `https://openapi.etsy.com/v3/application/listings/${l.listing_id}/images`,
-          { headers: { 'x-api-key': ETSY_API_KEY } }
-        );
-        l.images = imgRes.ok ? (await imgRes.json()).results || [] : [];
-      } catch { l.images = []; }
-    }));
     
     allListings = listings;
     filteredListings = [...listings];
-    
-    // Show filter bar if we have products
+
     if (listings.length > 0) {
       document.getElementById('filter-bar').style.display = 'flex';
     }
-    
+
     renderListings(listings);
   } catch(e) {
     document.getElementById('loading-state').style.display = 'none';
