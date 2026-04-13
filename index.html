@@ -486,12 +486,12 @@
     </div>
   </div>
   
-  <div class="filter-bar" id="filter-bar" style="display:none;">
-    <button class="filter-btn active" onclick="filterProducts('all')" data-filter="all">All Products</button>
-    <button class="filter-btn" onclick="filterProducts('planter')" data-filter="planter">Planters</button>
-    <button class="filter-btn" onclick="filterProducts('coaster')" data-filter="coaster">Coasters</button>
-    <button class="filter-btn" onclick="filterProducts('desk')" data-filter="desk">Desk Items</button>
-    <select class="sort-select" onchange="sortProducts(this.value)">
+  <div class="filter-bar" id="filter-bar" style="display:none;" role="group" aria-label="Filter products">
+    <button class="filter-btn active" onclick="filterProducts('all')" data-filter="all" aria-pressed="true">All Products</button>
+    <button class="filter-btn" onclick="filterProducts('planter')" data-filter="planter" aria-pressed="false">Planters</button>
+    <button class="filter-btn" onclick="filterProducts('coaster')" data-filter="coaster" aria-pressed="false">Coasters</button>
+    <button class="filter-btn" onclick="filterProducts('desk')" data-filter="desk" aria-pressed="false">Desk Items</button>
+    <select class="sort-select" onchange="sortProducts(this.value)" aria-label="Sort products">
       <option value="featured">Sort: Featured</option>
       <option value="price-low">Price: Low to High</option>
       <option value="price-high">Price: High to Low</option>
@@ -505,6 +505,12 @@
     <div><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-price"></div></div>
     <div><div class="skel skel-img"></div><div class="skel skel-title"></div><div class="skel skel-price"></div></div>
   </div>
+  <noscript>
+    <div style="text-align:center;padding:3rem 2rem;">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--dark);margin-bottom:1rem;">JavaScript is required to view products.</p>
+      <a href="https://www.etsy.com/shop/CroiConcrete" style="display:inline-block;background:var(--dark);color:var(--cream);text-decoration:none;padding:0.8rem 2rem;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;border-radius:2px;" target="_blank" rel="noopener">Browse on Etsy instead →</a>
+    </div>
+  </noscript>
   <div class="error-box" id="error-box">
     <h3>Could not load listings</h3>
     <p id="error-msg">There was a problem fetching your shop data.</p>
@@ -770,8 +776,12 @@ async function handleNewsletter(e) {
 // ── PRODUCT FILTERING & SORTING ──
 function filterProducts(category) {
   const buttons = document.querySelectorAll('.filter-btn');
-  buttons.forEach(b => b.classList.remove('active'));
-  document.querySelector(`.filter-btn[data-filter="${category}"]`).classList.add('active');
+  buttons.forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
+  });
+  const active = document.querySelector(`.filter-btn[data-filter="${category}"]`);
+  if (active) { active.classList.add('active'); active.setAttribute('aria-pressed', 'true'); }
   
   if (category === 'all') {
     filteredListings = [...allListings];
@@ -965,6 +975,52 @@ const POSTS = [
       <p>Is concrete the greenest material? No. But neither is ceramics (high-temperature kiln firing), metal (energy-intensive smelting), or glass (extremely high melting points). Every material has a footprint. The question is how responsibly it's used.</p>
       <p>We think small-scale, handmade, long-lasting concrete homeware sits comfortably within the spectrum of sustainable choices. It's not perfect, but it's honest, considered, and built to last.</p>
     `
+  },
+  {
+    id: 7,
+    tag: 'Buying Guide',
+    title: 'Concrete Planters vs Ceramic Planters: Which Is Right for You?',
+    excerpt: 'Both materials have their merits. Here\'s an honest comparison to help you decide which planter is the better choice for your home and plants.',
+    date: '2026-04-05',
+    dateDisplay: '5 April 2026',
+    emoji: '🌿',
+    content: `
+      <p>If you're looking for a new planter, you've likely considered both ceramic and concrete. They're both popular, both available in minimalist styles, and both look great on a windowsill. So what's the actual difference — and which should you choose?</p>
+      <h2>Weight and Stability</h2>
+      <p>Concrete wins on weight. A concrete planter is significantly heavier than a ceramic equivalent, which means it stays put. For larger plants or anything top-heavy, that stability matters. Ceramic pots tip — concrete doesn't.</p>
+      <h2>Porosity and Drainage</h2>
+      <p>Unsealed concrete is naturally porous, which is actually good for plants. It allows the growing medium to breathe and excess moisture to slowly wick away. Ceramic varies: glazed ceramic is non-porous and retains moisture, which can lead to root rot if you overwater. Terracotta (unglazed ceramic) is porous like concrete.</p>
+      <h2>Durability</h2>
+      <p>Ceramic chips and cracks on impact. Drop a ceramic pot and it's usually done. Drop a concrete planter and it'll likely survive — the material is inherently tougher. For households with children, pets, or clumsy moments, concrete is the more resilient choice.</p>
+      <h2>Aesthetics</h2>
+      <p>This is personal. Ceramic offers glaze colours and a smooth finish. Concrete offers texture, weight, and a raw industrial aesthetic that works particularly well in Scandi-minimal and modern interiors. Our concrete planters have subtle surface variation that makes each one genuinely unique — something no ceramic production run can match.</p>
+      <h2>Price</h2>
+      <p>Handmade concrete planters are typically comparable in price to quality ceramic. Mass-produced ceramic is cheaper. But if you're comparing handmade against handmade, concrete and ceramic sit at similar price points.</p>
+      <h2>The Verdict</h2>
+      <p>For indoor plants in a modern home, concrete planters are the better choice if you value durability, stability, and a distinctive aesthetic. Ceramic is the better choice if you want colour variety or a more traditional look. For most people, the honest answer is: have both.</p>
+    `
+  },
+  {
+    id: 8,
+    tag: 'Gifting',
+    title: 'The Complete Guide to Buying Handmade Gifts in the UK',
+    excerpt: 'Why handmade gifts matter, where to find them, and how to choose something that will actually mean something to the person receiving it.',
+    date: '2026-04-08',
+    dateDisplay: '8 April 2026',
+    emoji: '🎀',
+    content: `
+      <p>The UK has a thriving handmade goods scene — from potters in Cornwall to concrete makers in Newcastle — yet most people still default to supermarket gift sets or Amazon wish lists. Here's why that's worth reconsidering, and how to do better.</p>
+      <h2>Why Handmade Gifts Are Different</h2>
+      <p>A handmade gift communicates something a factory-produced item can't: that someone chose it deliberately, from a real maker, knowing it was made by hand. The recipient can feel the difference — literally, in the weight and texture of the object, and figuratively, in what it implies about the thought that went into it.</p>
+      <h2>Where to Find Handmade Gifts in the UK</h2>
+      <p>Etsy remains the best single destination for UK handmade goods. Filter by location to support British makers specifically. Craft markets — particularly Christmas markets in cities like Newcastle, Edinburgh, Bristol, and London — are excellent for finding makers you'd never discover online. Instagram is increasingly useful too: search hashtags like #UKmakes or #handmadeUK.</p>
+      <h2>What Makes a Good Handmade Gift</h2>
+      <p>The best handmade gifts are useful. A beautiful object that sits in a drawer is a waste of the maker's craft and the buyer's money. Think about what the recipient actually uses daily: coasters on their coffee table, a planter for their desk, a pen holder in their office. These are gifts that become part of someone's everyday environment — quietly appreciated every day rather than admired once and forgotten.</p>
+      <h2>Concrete Homeware as a Gift</h2>
+      <p>Handmade concrete homeware sits in a sweet spot: it's genuinely unusual (most people won't have received it before), it's practical (it gets used), and it's durable (it lasts). A set of concrete coasters or a small concrete planter from Croi Concrete makes a strong gift for housewarmings, birthdays, Christmas, or any occasion where you want to give something that stands out.</p>
+      <h2>The Honest Advice</h2>
+      <p>Don't overthink it. Find a maker whose work you genuinely like, buy something you'd want yourself, and wrap it properly. The handmade provenance does the rest of the work.</p>
+    `
   }
 ];
 
@@ -1141,10 +1197,20 @@ function renderListings(listings) {
     const altText = img ? `${esc(title)} - handcrafted concrete homeware by Croi Concrete, Newcastle upon Tyne` : '';
     const favs = listing.num_favorers || 0;
     const favBadge = favs > 0 ? `<span class="fav-count">♥ ${favs}</span>` : '';
+    // srcset: use multiple Etsy image sizes for responsive loading
+    const imgObj = listing.images?.[0];
+    const srcset = imgObj
+      ? [
+          imgObj.url_170x170 ? `${imgObj.url_170x170} 170w` : '',
+          imgObj.url_570xN   ? `${imgObj.url_570xN} 570w`   : '',
+          imgObj.url_fullxfull ? `${imgObj.url_fullxfull} 1000w` : ''
+        ].filter(Boolean).join(', ')
+      : '';
+    const sizes = '(max-width:480px) 170px, (max-width:768px) 280px, 570px';
 
     card.innerHTML = `
       <div class="product-img-wrap">
-        ${img ? `<img src="${img}" alt="${altText}" loading="lazy" itemprop="image">` : ''}
+        ${img ? `<img src="${img}" ${srcset ? `srcset="${srcset}" sizes="${sizes}"` : ''} alt="${altText}" loading="lazy" itemprop="image">` : ''}
         ${badge}
         ${favBadge}
         <div class="product-overlay">
