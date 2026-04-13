@@ -457,19 +457,17 @@
   }
 </style>
 
-<!-- Google Analytics 4 — replace G-XXXXXXXXXX with your actual GA4 measurement ID -->
-<!--
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- Google Analytics 4 -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EG7F5SYGCM"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', 'G-EG7F5SYGCM');
 </script>
--->
 
-<!-- Cloudflare Web Analytics — replace token with your actual beacon token -->
-<!-- <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_CLOUDFLARE_BEACON_TOKEN"}'></script> -->
+<!-- Cloudflare Web Analytics — add beacon token here when ready -->
 </head>
 <body>
 <a href="#shop" class="skip-link">Skip to products</a>
@@ -781,9 +779,7 @@ window.addEventListener('scroll', () => {
 });
 
 // ── NEWSLETTER ──
-// TODO: Replace 'YOUR_FORMSPREE_ID' with your actual Formspree form ID
-// Create a free form at https://formspree.io — takes 2 minutes
-const NEWSLETTER_ENDPOINT = 'https://formspree.io/f/YOUR_FORMSPREE_ID';
+const NEWSLETTER_ENDPOINT = 'https://formspree.io/f/xaqaybyq';
 
 async function handleNewsletter(e) {
   e.preventDefault();
@@ -793,17 +789,12 @@ async function handleNewsletter(e) {
   btn.disabled = true;
 
   try {
-    if (NEWSLETTER_ENDPOINT.includes('YOUR_FORMSPREE_ID')) {
-      // Formspree not yet configured — show success anyway, log to console
-      console.log('Newsletter signup (no endpoint configured):', email);
-    } else {
-      const res = await fetch(NEWSLETTER_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email, source: 'croiconcrete.co.uk newsletter' })
-      });
-      if (!res.ok) throw new Error('Submission failed');
-    }
+    const res = await fetch(NEWSLETTER_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ email, source: 'croiconcrete.co.uk newsletter' })
+    });
+    if (!res.ok) throw new Error('Submission failed');
 
     // Track event
     if (typeof gtag !== 'undefined') {
