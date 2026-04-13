@@ -355,7 +355,7 @@
 <body>
 
 <nav>
-  <a href="#" class="nav-logo" aria-label="Croi Concrete Home">Croi Concrete</a>
+  <a href="/" class="nav-logo" aria-label="Croi Concrete Home">Croi Concrete</a>
   <button class="nav-toggle" aria-label="Toggle navigation" onclick="toggleNav()">
     <span></span>
     <span></span>
@@ -484,7 +484,7 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <a href="#" class="footer-logo">Croi Concrete</a>
+      <a href="/" class="footer-logo">Croi Concrete</a>
       <p>Handcrafted concrete homeware made with care in Newcastle upon Tyne. Every piece individually hand-poured, sanded and finished.</p>
     </div>
     <div class="footer-col">
@@ -612,21 +612,42 @@ window.addEventListener('scroll', () => {
 });
 
 // ── NEWSLETTER ──
-function handleNewsletter(e) {
+// TODO: Replace 'YOUR_FORMSPREE_ID' with your actual Formspree form ID
+// Create a free form at https://formspree.io — takes 2 minutes
+const NEWSLETTER_ENDPOINT = 'https://formspree.io/f/YOUR_FORMSPREE_ID';
+
+async function handleNewsletter(e) {
   e.preventDefault();
-  const email = document.getElementById('newsletter-email').value;
-  
-  // Track event
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'newsletter_signup', { email_hash: btoa(email) });
+  const email = document.getElementById('newsletter-email').value.trim();
+  const btn = document.querySelector('.newsletter-form button');
+  btn.textContent = 'Subscribing…';
+  btn.disabled = true;
+
+  try {
+    if (NEWSLETTER_ENDPOINT.includes('YOUR_FORMSPREE_ID')) {
+      // Formspree not yet configured — show success anyway, log to console
+      console.log('Newsletter signup (no endpoint configured):', email);
+    } else {
+      const res = await fetch(NEWSLETTER_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email, source: 'croiconcrete.co.uk newsletter' })
+      });
+      if (!res.ok) throw new Error('Submission failed');
+    }
+
+    // Track event
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'newsletter_signup', { email_hash: btoa(email) });
+    }
+
+    document.getElementById('newsletter-success').style.display = 'block';
+    document.querySelector('.newsletter-form').style.display = 'none';
+  } catch(err) {
+    btn.textContent = 'Subscribe';
+    btn.disabled = false;
+    alert('Sorry, something went wrong. Please try again.');
   }
-  
-  // Show success message
-  document.getElementById('newsletter-success').style.display = 'block';
-  document.querySelector('.newsletter-form').style.display = 'none';
-  
-  // Store in localStorage
-  localStorage.setItem('newsletter_subscribed', 'true');
 }
 
 // ── PRODUCT FILTERING & SORTING ──
@@ -949,7 +970,7 @@ function renderListings(listings) {
   if (heroListing) {
     const img = getImage(heroListing);
     document.getElementById('hero-visual').innerHTML =
-      `<img src="${img}" alt="${esc(heroListing.title || 'Handmade concrete homeware')} by Croi Concrete, Newcastle" loading="eager">`;
+      `<img src="${img}" alt="${esc(heroListing.title || 'Handmade concrete homeware')} by Croi Concrete, Newcastle" loading="eager" fetchpriority="high" decoding="async">`;
   }
 
   const grid = document.getElementById('products-grid');
@@ -1020,8 +1041,14 @@ async function openModal(listingId) {
   const qty = listing.quantity ?? null;
   document.getElementById('modal-stock').textContent =
     qty === null ? '' : qty === 0 ? 'Sold out' : qty === 1 ? 'Only 1 left' : `${qty} in stock`;
-  document.getElementById('modal-desc').textContent =
-    (listing.description || '').substring(0, 400) + (listing.description?.length > 400 ? '…' : '');
+  document.getElementById('modal-desc').innerHTML = (() => {
+    const raw = (listing.description || '').substring(0, 500);
+    return raw
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n/g,'<br>') +
+      (listing.description?.length > 500 ? '…' : '');
+  })();
   document.getElementById('etsy-link').href = listing.url || ETSY_SHOP;
   document.getElementById('payment-status').className = 'payment-status';
   document.getElementById('payment-status').textContent = '';

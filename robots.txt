@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /functions/
+Disallow: /*.sh$
 
+# Sitemap
 Sitemap: https://croiconcrete.co.uk/sitemap.xml
