@@ -682,6 +682,7 @@
       <div class="product-page-tag" id="pp-category"></div>
       <h1 class="product-page-title" id="pp-title"></h1>
       <div class="product-page-price" id="pp-price"></div>
+      <div id="pp-price-note" style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:0.4rem;"></div>
       <div class="product-page-meta" id="pp-meta"></div>
       <div class="product-page-desc" id="pp-desc"></div>
       <div class="product-page-specs">
@@ -1648,6 +1649,15 @@ function showProductPage(listingId) {
   document.getElementById('pp-title').textContent = title;
   document.getElementById('pp-breadcrumb-title').textContent = title.length > 40 ? title.substring(0,38)+'…' : title;
   document.getElementById('pp-price').textContent = price;
+
+  // Price accuracy note — the Etsy API price field IS the current sale price
+  const priceNote = document.getElementById('pp-price-note');
+  if (priceNote) {
+    const subtotal = listing.price ? (listing.price.amount / (listing.price.divisor || 100)) : 0;
+    priceNote.textContent = subtotal >= 50
+      ? 'Free UK delivery on this order · Price matches Etsy'
+      : 'Price matches Etsy · From £3.95 UK delivery';
+  }
   document.getElementById('pp-main-img').src  = img || '';
   document.getElementById('pp-main-img').alt  = `${title} — handcrafted concrete homeware by Croi Concrete`;
   document.getElementById('pp-etsy-btn').href = listing.url || ETSY_SHOP;

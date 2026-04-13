@@ -263,12 +263,37 @@ const SQUARE_APP_ID = 'sq0idp-lxnxMVcZXgCwGeBsvoUWlw';
 const SQUARE_LOCATION_ID = 'L585ZRYRYWNPD';
 
 // Shipping options
-const SHIPPING_OPTIONS = [
-  { id: 'standard', label: 'Standard UK Delivery', desc: '3-5 working days', price: 3.95, countries: ['GB'] },
-  { id: 'express',  label: 'Express UK Delivery',  desc: '1-2 working days', price: 6.95, countries: ['GB'] },
-  { id: 'intl',     label: 'International Delivery', desc: '7-14 working days', price: 12.00, countries: ['*'] },
-  { id: 'free',     label: 'Free UK Delivery',      desc: 'On orders over £50 · 3-5 working days', price: 0, countries: ['GB'], minOrder: 50 }
-];
+// Shipping rates fetched from /shipping CF Function (matches Etsy profile exactly)
+let SHIPPING_OPTIONS = [];
+
+async function loadShippingRates(country) {
+  try {
+    const res = await fetch(`/shipping?country=${encodeURIComponent(country||'GB')}`);
+    const data = await res.json();
+    const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    // Map CF Function rates to local format
+    SHIPPING_OPTIONS = data.rates.map(r => ({
+      id: r.id, label: r.label, desc: `${r.carrier} · ${r.description}`,
+      price: r.price, countries: [country||'GB']
+    }));
+    // Add free shipping tier for GB orders over £50
+    if ((country||'GB') === 'GB' && subtotal >= 50) {
+      SHIPPING_OPTIONS.unshift({ id: 'free', label: 'Free UK Delivery',
+        desc: 'On orders over £50 · Royal Mail 2nd Class', price: 0, countries: ['GB'] });
+    }
+  } catch(e) {
+    // Fallback rates if function unavailable
+    console.warn('Could not load shipping rates, using fallback');
+    const isGB = (country||'GB') === 'GB';
+    SHIPPING_OPTIONS = isGB ? [
+      { id: 'uk_standard', label: 'Standard UK Delivery', desc: 'Royal Mail · 3-5 working days', price: 3.95, countries: ['GB'] },
+      { id: 'uk_tracked',  label: 'Tracked UK Delivery',  desc: 'Royal Mail Tracked · 2-3 working days', price: 5.50, countries: ['GB'] },
+      { id: 'uk_express',  label: 'Express UK Delivery',  desc: 'Royal Mail 1st Class · 1-2 working days', price: 6.95, countries: ['GB'] },
+    ] : [
+      { id: 'intl_standard', label: 'International Delivery', desc: 'Royal Mail International · 7-14 working days', price: 12.95, countries: ['*'] }
+    ];
+  }
+}
 
 let cart = [];
 let selectedShipping = null;
@@ -283,7 +308,8 @@ function loadCart() {
     cart = stored ? JSON.parse(stored) : [];
   } catch(e) { cart = []; }
   renderSummary();
-  renderShipping();
+  const country = document.getElementById('country')?.value || 'GB';
+  loadShippingRates(country).then(() => renderShipping());
 }
 
 function saveCart() {
@@ -333,8 +359,7 @@ function renderShipping() {
   if (!el) return;
 
   const available = SHIPPING_OPTIONS.filter(opt => {
-    if (opt.minOrder && subtotal < opt.minOrder) return false;
-    return opt.countries.includes('*') || opt.countries.includes(country);
+    return opt.countries.includes('*') || opt.countries.includes(country) || opt.countries.includes('GB');
   });
 
   el.innerHTML = available.map(opt => `
@@ -356,12 +381,7 @@ function renderShipping() {
 }
 
 function selectShipping(id) {
-  const country = document.getElementById('country')?.value || 'GB';
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  selectedShipping = SHIPPING_OPTIONS.find(o => {
-    if (o.minOrder && subtotal < o.minOrder) return false;
-    return o.id === id && (o.countries.includes('*') || o.countries.includes(country));
-  });
+  selectedShipping = SHIPPING_OPTIONS.find(o => o.id === id) || null;
   renderSummary();
 }
 
@@ -508,7 +528,11 @@ async function handlePayment() {
 }
 
 document.getElementById('footer-year').textContent = new Date().getFullYear();
-document.getElementById('country').addEventListener('change', renderShipping);
+document.getElementById('country').addEventListener('change', () => {
+  const country = document.getElementById('country').value;
+  selectedShipping = null;
+  loadShippingRates(country).then(() => renderShipping());
+});
 loadCart();
 
 // Update pay button text with total
