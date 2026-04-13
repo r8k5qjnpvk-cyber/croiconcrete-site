@@ -1699,9 +1699,44 @@ function showProductPage(listingId) {
   document.querySelector('.back-to-top').style.display = 'none';
   window.scrollTo(0, 0);
 
-  // Update URL and page title
+  // Update URL, title and social meta for this product
   history.pushState({ productId: listingId }, title, `/product/${listingId}`);
   document.title = `${title} | Croi Concrete`;
+  const productUrl = `https://croiconcrete.co.uk/product/${listingId}`;
+  const productImg = img ? img : 'https://croiconcrete.co.uk/og-image.jpg';
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${title} | Croi Concrete`);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', (listing.description||'Handmade concrete homeware by Croi Concrete, Newcastle.').substring(0,160));
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', productUrl);
+  document.querySelector('meta[property="og:image"]')?.setAttribute('content', productImg);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${title} | Croi Concrete`);
+  document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', productImg);
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', productUrl);
+
+  // Inject per-product Product schema
+  const existingPP = document.getElementById('schema-product-page');
+  if (existingPP) existingPP.remove();
+  const ppSchema = document.createElement('script');
+  ppSchema.type = 'application/ld+json';
+  ppSchema.id = 'schema-product-page';
+  ppSchema.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": title,
+    "url": productUrl,
+    "image": listing.images?.map(i => i.url_570xN || i.url_fullxfull).filter(Boolean) || [productImg],
+    "description": (listing.description||'').substring(0,500),
+    "brand": {"@type":"Brand","name":"Croi Concrete"},
+    "manufacturer": {"@type":"Organization","name":"Croi Concrete","address":{"@type":"PostalAddress","addressLocality":"Newcastle upon Tyne","addressCountry":"GB"}},
+    "offers": {
+      "@type":"Offer",
+      "priceCurrency": listing.price?.currency_code || "GBP",
+      "price": listing.price ? (listing.price.amount/(listing.price.divisor||100)).toFixed(2) : "0",
+      "availability": (listing.quantity > 0 || listing.quantity === null) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "url": listing.url || productUrl,
+      "seller": {"@type":"Organization","name":"Croi Concrete"}
+    }
+  });
+  document.head.appendChild(ppSchema);
 
   // GA4 track
   if (typeof gtag !== 'undefined') {
@@ -1714,6 +1749,13 @@ function showShop(e) {
   document.getElementById('product-page').classList.remove('active');
   document.querySelector('main').style.display = '';
   document.querySelector('.back-to-top').style.display = '';
+  // Restore original meta tags
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content','Handmade Concrete Planters, Coasters & Homeware | Croi Concrete');
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content','https://croiconcrete.co.uk/');
+  document.querySelector('meta[property="og:image"]')?.setAttribute('content','https://croiconcrete.co.uk/og-image.jpg');
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href','https://croiconcrete.co.uk/');
+  const existingPP = document.getElementById('schema-product-page');
+  if (existingPP) existingPP.remove();
   history.pushState({}, 'Croi Concrete', '/');
   document.title = 'Handmade Concrete Planters, Coasters & Homeware | Croi Concrete UK';
   window.scrollTo(0, 0);
