@@ -603,7 +603,8 @@
         }
 
         // Show skeleton loading cards while products fetch
-        function showSkeletons() {            const container = document.getElementById('products-container');
+        function showSkeletons() {
+            const container = document.getElementById('products-container');
             container.className = 'products-grid';
             container.innerHTML = Array(6).fill('').map(() => `
                 <div class="product-card" style="pointer-events:none">
