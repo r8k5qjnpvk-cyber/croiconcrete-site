@@ -186,6 +186,11 @@
   .nav-links a:hover{color:var(--dark);}
   .nav-etsy{background:var(--dark)!important;color:var(--cream)!important;padding:0.48rem 1.2rem;border-radius:2px;}
   .nav-etsy:hover{background:var(--accent)!important;}
+  /* Cart button */
+  .nav-cart{position:relative;background:none;border:none;cursor:pointer;padding:0.4rem;color:var(--concrete);transition:color 0.2s;display:flex;align-items:center;gap:0.4rem;font-family:'Lato',sans-serif;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;}
+  .nav-cart:hover{color:var(--dark);}
+  .cart-count{position:absolute;top:-4px;right:-6px;background:var(--accent);color:white;width:16px;height:16px;border-radius:50%;font-size:0.55rem;display:flex;align-items:center;justify-content:center;font-weight:400;opacity:0;transition:opacity 0.2s;}
+  .cart-count.show{opacity:1;}
   .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:0.5rem;flex-direction:column;gap:0.35rem;}
   .nav-toggle span{width:24px;height:2px;background:var(--dark);transition:all 0.3s;display:block;}
   .nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(6px,6px);}
@@ -521,11 +526,16 @@
   </button>
   <ul class="nav-links" id="nav-links">
     <li><a href="#shop" onclick="closeNav()">Shop</a></li>
+    <li><a href="/about">About</a></li>
     <li><a href="#blog" onclick="closeNav()">Journal</a></li>
-    <li><a href="#about" onclick="closeNav()">About</a></li>
     <li><a href="#contact" onclick="closeNav()">Contact</a></li>
-    <li><a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener" class="nav-etsy">Visit Etsy Shop</a></li>
+    <li><a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener" class="nav-etsy">Etsy Shop</a></li>
   </ul>
+  <button class="nav-cart" onclick="goToCheckout()" aria-label="View basket">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Basket
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
 </nav>
 
 <main>
@@ -681,7 +691,8 @@
         <div><div class="product-page-spec-label">Care</div><div class="product-page-spec-val">Hand wash only</div></div>
       </div>
       <div class="product-page-btns">
-        <a id="pp-etsy-btn" href="#" target="_blank" rel="noopener" class="product-page-btn-primary">Buy on Etsy →</a>
+        <button class="product-page-btn-primary" id="pp-add-cart-btn" onclick="addToCart()">Add to Basket</button>
+        <a id="pp-etsy-btn" href="#" target="_blank" rel="noopener" class="product-page-btn-secondary">Buy directly on Etsy →</a>
         <button class="product-page-btn-secondary" onclick="ppShare()">Share this product</button>
         <a href="/#shop" onclick="showShop(event)" class="product-page-btn-secondary">← Back to Shop</a>
       </div>
@@ -1213,6 +1224,8 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('cookie-banner').classList.add('hidden');
   }
 
+  loadCartFromStorage();
+
   loadListings().then(() => {
     // After listings load, check if we're on a product URL and show it
     const productMatch = window.location.pathname.match(/^\/product\/(\d+)/);
@@ -1622,6 +1635,7 @@ function esc(s) {
 function showProductPage(listingId) {
   const listing = (window._listings || allListings).find(l => l.listing_id == listingId);
   if (!listing) return;
+  window._currentProductListing = listing; // for addToCart()
 
   // Populate content
   const title = listing.title || '';
@@ -1811,6 +1825,66 @@ const LISTINGS_API_URL = (() => {
   const hourBucket = Math.floor(Date.now() / (1000 * 60 * 60));
   return `${LISTINGS_API}?v=${hourBucket}`;
 })();
+
+// ── CART ──
+let _cart = [];
+
+function loadCartFromStorage() {
+  try { _cart = JSON.parse(localStorage.getItem('croi_cart') || '[]'); }
+  catch(e) { _cart = []; }
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const total = _cart.reduce((s, i) => s + (i.qty || 1), 0);
+  const el = document.getElementById('cart-count');
+  if (!el) return;
+  el.textContent = total;
+  el.classList.toggle('show', total > 0);
+}
+
+function addToCart() {
+  if (!currentListing && !window._currentProductListing) return;
+  const listing = currentListing || window._currentProductListing;
+  const img = getImage(listing);
+  const price = listing.price ? (listing.price.amount / (listing.price.divisor || 100)) : 0;
+
+  const existing = _cart.find(i => i.id === listing.listing_id);
+  if (existing) {
+    existing.qty = (existing.qty || 1) + 1;
+  } else {
+    _cart.push({
+      id: listing.listing_id,
+      title: listing.title || '',
+      price,
+      image: img || '',
+      qty: 1,
+      url: listing.url || ''
+    });
+  }
+
+  localStorage.setItem('croi_cart', JSON.stringify(_cart));
+  updateCartCount();
+
+  // Feedback on button
+  const btn = document.getElementById('pp-add-cart-btn');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Added to Basket';
+    btn.style.background = 'var(--success, #2d6a4f)';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+  }
+
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'add_to_cart', {
+      items: [{ item_id: listing.listing_id, item_name: listing.title, price, currency: 'GBP' }]
+    });
+  }
+}
+
+function goToCheckout() {
+  window.location.href = '/checkout';
+}
 </script>
 </body>
 </html>
