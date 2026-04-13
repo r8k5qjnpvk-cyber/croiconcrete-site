@@ -115,6 +115,34 @@
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
+
+  /* Cookie banner */
+  .cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--dark);color:var(--stone);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;z-index:200;font-size:0.75rem;line-height:1.6;flex-wrap:wrap;}
+  .cookie-banner a{color:var(--stone);text-decoration:underline;}
+  .cookie-banner.hidden{display:none;}
+  .cookie-btns{display:flex;gap:0.75rem;flex-shrink:0;}
+  .cookie-btn{padding:0.5rem 1.2rem;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;border-radius:2px;cursor:pointer;font-family:'Lato',sans-serif;border:1px solid var(--stone);background:transparent;color:var(--stone);transition:all 0.2s;}
+  .cookie-btn.accept{background:var(--cream);color:var(--dark);border-color:var(--cream);}
+  .cookie-btn:hover{opacity:0.8;}
+
+  /* Favourites pill on product card */
+  .fav-count{position:absolute;top:0.75rem;right:0.75rem;background:rgba(250,248,245,0.92);color:var(--accent);font-size:0.6rem;letter-spacing:0.1em;padding:0.22rem 0.55rem;border-radius:2px;display:flex;align-items:center;gap:0.3rem;}
+
+  /* Filter count bubbles */
+  .filter-count{display:inline-block;background:var(--light-stone);color:var(--concrete);font-size:0.58rem;padding:0.1rem 0.45rem;border-radius:10px;margin-left:0.4rem;transition:all 0.2s;}
+  .filter-btn.active .filter-count{background:rgba(255,255,255,0.25);color:var(--cream);}
+
+  /* Hero dual CTA */
+  .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;}
+  .hero-cta-secondary{display:inline-block;color:var(--concrete);text-decoration:none;padding:0.82rem 2.4rem;font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;transition:color 0.25s;border-radius:2px;}
+  .hero-cta-secondary:hover{color:var(--dark);}
+
+  /* About dual CTA */
+  .about-ctas{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+  .about-cta-primary{display:inline-block;background:var(--cream);color:var(--dark);text-decoration:none;padding:0.78rem 2.2rem;font-size:0.66rem;letter-spacing:0.25em;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
+  .about-cta-primary:hover{background:var(--accent);color:var(--cream);}
+  .about-cta-secondary{display:inline-block;border:1px solid var(--stone);color:var(--stone);text-decoration:none;padding:0.78rem 2.2rem;font-size:0.66rem;letter-spacing:0.25em;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
+  .about-cta-secondary:hover{background:var(--stone);color:var(--dark);}
   body{font-family:'Lato',sans-serif;background:var(--warm-white);color:var(--text);font-weight:300;}
 
   nav{position:sticky;top:0;z-index:100;background:rgba(250,248,245,0.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--light-stone);display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:68px;}
@@ -374,7 +402,10 @@
   <div class="hero-text">
     <h2>Made by hand,<br><em>built to last.</em></h2>
     <p>Each piece is individually cast in concrete — imperfect by nature, unique by design. Minimal forms for modern homes, handcrafted in Newcastle upon Tyne.</p>
-    <a href="#shop" class="hero-cta">Browse the Collection</a>
+    <div class="hero-ctas">
+      <a href="#shop" class="hero-cta">Browse the Collection</a>
+      <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener" class="hero-cta-secondary">View on Etsy →</a>
+    </div>
   </div>
   <div class="hero-visual" id="hero-visual" aria-hidden="true">
     <div class="hero-placeholder">Loading collection…</div>
@@ -474,8 +505,11 @@
 
 <section class="about" id="about" aria-label="About Croi Concrete">
   <h2>Made in Newcastle</h2>
-  <p>Every piece from Croi Concrete is hand-poured, sanded, and finished in our studio. We work with concrete because it's honest — raw texture, quiet weight, enduring form. No two pieces are exactly alike. Designed for homes that value the handmade.</p>
-  <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener">Shop on Etsy</a>
+  <p>Every piece from Croi Concrete is hand-poured, sanded, and finished in our studio in Newcastle upon Tyne. We work with concrete because it's honest — raw texture, quiet weight, enduring form. No two pieces are exactly alike. Designed for homes that value the handmade, built to last a lifetime.</p>
+  <div class="about-ctas">
+    <a href="#shop" class="about-cta-primary">Shop the Collection</a>
+    <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener" class="about-cta-secondary">Visit our Etsy Shop</a>
+  </div>
 </section>
 </main>
 
@@ -571,6 +605,15 @@
     <div class="post-meta" id="post-meta"></div>
     <div class="post-content" id="post-content"></div>
     <a href="#shop" class="post-cta" onclick="closePost()">Shop the Collection →</a>
+  </div>
+</div>
+
+<!-- Cookie consent banner -->
+<div class="cookie-banner" id="cookie-banner">
+  <span>We use cookies to improve your experience. <a href="https://www.etsy.com/legal/privacy/" target="_blank" rel="noopener">Privacy policy</a>.</span>
+  <div class="cookie-btns">
+    <button class="cookie-btn" onclick="declineCookies()">Decline</button>
+    <button class="cookie-btn accept" onclick="acceptCookies()">Accept</button>
   </div>
 </div>
 
@@ -919,13 +962,28 @@ window.addEventListener('DOMContentLoaded', () => {
   // Set copyright year
   const fyEl = document.getElementById('footer-year');
   if (fyEl) fyEl.textContent = new Date().getFullYear();
-  
+
+  // Cookie banner
+  if (localStorage.getItem('cookie_choice')) {
+    document.getElementById('cookie-banner').classList.add('hidden');
+  }
+
   loadListings();
   renderBlog();
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeModal(); closePost(); }
   });
 });
+
+// ── COOKIE CONSENT ──
+function acceptCookies() {
+  localStorage.setItem('cookie_choice', 'accepted');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+function declineCookies() {
+  localStorage.setItem('cookie_choice', 'declined');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
 
 async function loadListings() {
   try {
@@ -966,6 +1024,17 @@ function renderListings(listings) {
   document.getElementById('last-updated').textContent =
     'Live from Etsy · ' + new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
 
+  // Update filter button counts using already-loaded allListings
+  const countAll = allListings.length;
+  const countPlanter = allListings.filter(l => (l.title||'').toLowerCase().includes('planter')).length;
+  const countCoaster = allListings.filter(l => (l.title||'').toLowerCase().includes('coaster')).length;
+  const countDesk    = allListings.filter(l => (l.title||'').toLowerCase().includes('desk')).length;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const f = btn.dataset.filter;
+    const n = f==='all'?countAll : f==='planter'?countPlanter : f==='coaster'?countCoaster : f==='desk'?countDesk : 0;
+    if (n > 0) btn.innerHTML = btn.innerHTML.replace(/<span class="filter-count">.*?<\/span>/,'') + `<span class="filter-count">${n}</span>`;
+  });
+
   const heroListing = listings.find(l => getImage(l));
   if (heroListing) {
     const img = getImage(heroListing);
@@ -996,11 +1065,14 @@ function renderListings(listings) {
     
     // Improved alt text with descriptive details
     const altText = img ? `${esc(title)} - handcrafted concrete homeware by Croi Concrete, Newcastle upon Tyne` : '';
-    
+    const favs = listing.num_favorers || 0;
+    const favBadge = favs > 0 ? `<span class="fav-count">♥ ${favs}</span>` : '';
+
     card.innerHTML = `
       <div class="product-img-wrap">
         ${img ? `<img src="${img}" alt="${altText}" loading="lazy" itemprop="image">` : ''}
         ${badge}
+        ${favBadge}
         <div class="product-overlay">
           <button class="product-btn" onclick="openModal(${listing.listing_id})">Buy now</button>
         </div>
@@ -1039,8 +1111,10 @@ async function openModal(listingId) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-price').textContent = formatPrice(listing);
   const qty = listing.quantity ?? null;
+  const favs = listing.num_favorers || 0;
   document.getElementById('modal-stock').textContent =
-    qty === null ? '' : qty === 0 ? 'Sold out' : qty === 1 ? 'Only 1 left' : `${qty} in stock`;
+    (qty === null ? '' : qty === 0 ? 'Sold out · ' : qty === 1 ? 'Only 1 left · ' : `${qty} in stock · `) +
+    (favs > 0 ? `♥ ${favs} favourites` : '');
   document.getElementById('modal-desc').innerHTML = (() => {
     const raw = (listing.description || '').substring(0, 500);
     return raw
