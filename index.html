@@ -455,6 +455,46 @@
     .hero{grid-template-columns:1fr;gap:1rem;}
     .hero-visual{display:none;}
   }
+
+  /* ── PRODUCT PAGE (full-page view) ── */
+  .product-page{display:none;min-height:100vh;background:var(--warm-white);}
+  .product-page.active{display:block;}
+  .product-page-inner{max-width:1100px;margin:0 auto;padding:3rem 3rem 6rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+  .product-page-breadcrumb{max-width:1100px;margin:0 auto;padding:1.5rem 3rem 0;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);}
+  .product-page-breadcrumb a{color:var(--concrete);text-decoration:none;transition:color 0.2s;}
+  .product-page-breadcrumb a:hover{color:var(--dark);}
+  .product-page-breadcrumb span{margin:0 0.5rem;}
+  .product-page-gallery{}
+  .product-page-main-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;background:var(--light-stone);display:block;margin-bottom:0.75rem;}
+  .product-page-thumbs{display:flex;gap:0.5rem;flex-wrap:wrap;}
+  .product-page-thumb{width:64px;height:64px;object-fit:cover;border-radius:2px;cursor:pointer;opacity:0.55;border:2px solid transparent;transition:opacity 0.2s,border-color 0.2s;}
+  .product-page-thumb:hover,.product-page-thumb.active{opacity:1;border-color:var(--accent);}
+  .product-page-details{position:sticky;top:88px;}
+  .product-page-tag{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem;}
+  .product-page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,2.5vw,2.4rem);font-weight:300;color:var(--dark);line-height:1.15;margin-bottom:0.75rem;}
+  .product-page-price{font-size:1.6rem;color:var(--accent);margin-bottom:0.4rem;}
+  .product-page-meta{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);margin-bottom:1.5rem;}
+  .product-page-desc{font-size:0.86rem;color:var(--text);line-height:1.85;margin-bottom:1.8rem;}
+  .product-page-specs{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1.8rem;padding:1rem;background:var(--cream);border-radius:2px;}
+  .product-page-spec-label{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);margin-bottom:0.2rem;}
+  .product-page-spec-val{font-size:0.78rem;color:var(--text);}
+  .product-page-btns{display:flex;flex-direction:column;gap:0.75rem;}
+  .product-page-btn-primary{display:block;text-align:center;background:var(--dark);color:var(--cream);text-decoration:none;padding:0.95rem 2rem;font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;border-radius:2px;border:none;cursor:pointer;font-family:'Lato',sans-serif;transition:background 0.2s;}
+  .product-page-btn-primary:hover{background:var(--accent);}
+  .product-page-btn-secondary{display:block;text-align:center;border:1px solid var(--light-stone);color:var(--concrete);text-decoration:none;padding:0.82rem 2rem;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
+  .product-page-btn-secondary:hover{border-color:var(--dark);color:var(--dark);}
+  .product-page-tags{margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:0.4rem;}
+  .product-page-tag-pill{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;background:var(--light-stone);color:var(--concrete);padding:0.28rem 0.7rem;border-radius:2px;}
+  .product-page-related{max-width:1100px;margin:0 auto;padding:3rem 3rem 5rem;border-top:1px solid var(--light-stone);}
+  .product-page-related h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:2rem;}
+  .product-page-related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem;}
+  @media(max-width:768px){
+    .product-page-inner{grid-template-columns:1fr;gap:2rem;padding:1.5rem;}
+    .product-page-breadcrumb{padding:1rem 1.5rem 0;}
+    .product-page-details{position:static;}
+    .product-page-related{padding:2rem 1.5rem;}
+    .product-page-specs{grid-template-columns:1fr;}
+  }
 </style>
 
 <!-- Google Analytics 4 -->
@@ -615,6 +655,44 @@
   </div>
 </section>
 </main>
+
+<!-- PRODUCT PAGE (full-page route) -->
+<div class="product-page" id="product-page" aria-label="Product detail">
+  <div class="product-page-breadcrumb" id="pp-breadcrumb">
+    <a href="/" onclick="showShop(event)">Home</a><span>›</span>
+    <a href="/#shop" onclick="showShop(event)">Shop</a><span>›</span>
+    <span id="pp-breadcrumb-title"></span>
+  </div>
+  <div class="product-page-inner">
+    <div class="product-page-gallery">
+      <img class="product-page-main-img" id="pp-main-img" src="" alt="">
+      <div class="product-page-thumbs" id="pp-thumbs"></div>
+    </div>
+    <div class="product-page-details">
+      <div class="product-page-tag" id="pp-category"></div>
+      <h1 class="product-page-title" id="pp-title"></h1>
+      <div class="product-page-price" id="pp-price"></div>
+      <div class="product-page-meta" id="pp-meta"></div>
+      <div class="product-page-desc" id="pp-desc"></div>
+      <div class="product-page-specs">
+        <div><div class="product-page-spec-label">Material</div><div class="product-page-spec-val">Fine aggregate concrete</div></div>
+        <div><div class="product-page-spec-label">Made in</div><div class="product-page-spec-val">Newcastle upon Tyne</div></div>
+        <div><div class="product-page-spec-label">Delivery</div><div class="product-page-spec-val">3-5 working days</div></div>
+        <div><div class="product-page-spec-label">Care</div><div class="product-page-spec-val">Hand wash only</div></div>
+      </div>
+      <div class="product-page-btns">
+        <a id="pp-etsy-btn" href="#" target="_blank" rel="noopener" class="product-page-btn-primary">Buy on Etsy →</a>
+        <button class="product-page-btn-secondary" onclick="ppShare()">Share this product</button>
+        <a href="/#shop" onclick="showShop(event)" class="product-page-btn-secondary">← Back to Shop</a>
+      </div>
+      <div class="product-page-tags" id="pp-tags"></div>
+    </div>
+  </div>
+  <div class="product-page-related" id="pp-related" style="display:none;">
+    <h3>You might also like</h3>
+    <div class="product-page-related-grid" id="pp-related-grid"></div>
+  </div>
+</div>
 
 <button class="back-to-top" id="back-to-top" onclick="scrollToTop()" aria-label="Back to top">↑</button>
 
@@ -1154,8 +1232,11 @@ function declineCookies() {
 
 async function loadListings() {
   try {
-    // Route through Cloudflare Pages Function — keeps API key server-side
-    const res = await fetch(LISTINGS_API);
+    // Route through CF Pages Function — key stays server-side.
+    // Hourly cache-bust: LISTINGS_API_URL appends ?v=HOUR_BUCKET so CF
+    // fetches fresh data from Etsy once per hour. functions/listings.js untouched.
+    const fetchUrl = (typeof LISTINGS_API_URL !== 'undefined') ? LISTINGS_API_URL : LISTINGS_API;
+    const res = await fetch(fetchUrl);
     if (!res.ok) {
       if (res.status === 429) throw new Error('Too many requests. Please try again in a moment.');
       throw new Error(`Unable to load products (Error ${res.status})`);
@@ -1523,6 +1604,161 @@ function formatPrice(listing) {
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ── PRODUCT PAGE ROUTING ──
+// Safe: reads from already-loaded allListings, zero extra API calls
+// URLs: /product/LISTING_ID — handled by showing/hiding sections
+
+function showProductPage(listingId) {
+  const listing = (window._listings || allListings).find(l => l.listing_id == listingId);
+  if (!listing) return;
+
+  // Populate content
+  const title = listing.title || '';
+  const img   = getImage(listing);
+  const price = formatPrice(listing);
+  const qty   = listing.quantity ?? null;
+  const favs  = listing.num_favorers || 0;
+  const tags  = listing.tags || [];
+
+  document.getElementById('pp-title').textContent = title;
+  document.getElementById('pp-breadcrumb-title').textContent = title.length > 40 ? title.substring(0,38)+'…' : title;
+  document.getElementById('pp-price').textContent = price;
+  document.getElementById('pp-main-img').src  = img || '';
+  document.getElementById('pp-main-img').alt  = `${title} — handcrafted concrete homeware by Croi Concrete`;
+  document.getElementById('pp-etsy-btn').href = listing.url || ETSY_SHOP;
+
+  // Category tag
+  const titleL = title.toLowerCase();
+  const cat = titleL.includes('planter') ? 'Planter' : titleL.includes('coaster') ? 'Coaster' :
+              titleL.includes('desk') ? 'Desk Accessory' : 'Concrete Homeware';
+  document.getElementById('pp-category').textContent = cat;
+
+  // Stock + favs meta
+  const stockStr = qty === null ? '' : qty === 0 ? 'Sold out · ' : qty === 1 ? 'Only 1 left · ' : `${qty} in stock · `;
+  const favStr   = favs > 0 ? `♥ ${favs} favourites` : '';
+  const viewStr  = listing.views ? ` · ${listing.views} views` : '';
+  document.getElementById('pp-meta').textContent = stockStr + favStr + viewStr;
+
+  // Description
+  const rawDesc = listing.description || '';
+  document.getElementById('pp-desc').innerHTML = rawDesc
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br>');
+
+  // Thumbnail gallery
+  const thumbsEl = document.getElementById('pp-thumbs');
+  const mainImgEl = document.getElementById('pp-main-img');
+  const images = listing.images || [];
+  thumbsEl.innerHTML = images.length > 1 ? images.map((im, idx) => {
+    const src = im.url_170x170 || im.url_570xN || '';
+    const full = im.url_570xN || im.url_fullxfull || src;
+    return `<img src="${src}" class="product-page-thumb${idx===0?' active':''}"
+      alt="${esc(title)} view ${idx+1}" loading="lazy"
+      onclick="ppSwitchImg('${full}', this)">`;
+  }).join('') : '';
+
+  // Tags
+  document.getElementById('pp-tags').innerHTML = tags.slice(0,8).map(t =>
+    `<span class="product-page-tag-pill">${esc(t)}</span>`).join('');
+
+  // Related products (3 others)
+  const related = (window._listings || allListings).filter(l => l.listing_id != listingId).slice(0,4);
+  const relEl = document.getElementById('pp-related');
+  const relGrid = document.getElementById('pp-related-grid');
+  if (related.length) {
+    relGrid.innerHTML = related.map(r => {
+      const rImg = getImage(r);
+      return rImg ? `<div class="product-card" onclick="navigateToProduct(${r.listing_id})" style="cursor:pointer;">
+        <div class="product-img-wrap">
+          <img src="${rImg}" alt="${esc(r.title||'')}" loading="lazy" class="product-image" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;">
+        </div>
+        <div class="product-info" style="padding:0.75rem 0;">
+          <div class="product-title">${esc(r.title||'')}</div>
+          <div class="product-price">${formatPrice(r)}</div>
+        </div>
+      </div>` : '';
+    }).filter(Boolean).join('');
+    relEl.style.display = 'block';
+  }
+
+  // Show product page, hide main site content
+  document.getElementById('product-page').classList.add('active');
+  document.querySelector('main').style.display = 'none';
+  document.querySelector('.back-to-top').style.display = 'none';
+  window.scrollTo(0, 0);
+
+  // Update URL and page title
+  history.pushState({ productId: listingId }, title, `/product/${listingId}`);
+  document.title = `${title} | Croi Concrete`;
+
+  // GA4 track
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'view_item', { items: [{ item_id: listingId, item_name: title, price: listing.price ? listing.price.amount/listing.price.divisor : 0, currency: 'GBP' }] });
+  }
+}
+
+function showShop(e) {
+  if (e) e.preventDefault();
+  document.getElementById('product-page').classList.remove('active');
+  document.querySelector('main').style.display = '';
+  document.querySelector('.back-to-top').style.display = '';
+  history.pushState({}, 'Croi Concrete', '/');
+  document.title = 'Handmade Concrete Planters, Coasters & Homeware | Croi Concrete UK';
+  window.scrollTo(0, 0);
+}
+
+function navigateToProduct(listingId) {
+  // If listings loaded, show immediately
+  if (allListings.length > 0) {
+    showProductPage(listingId);
+  } else {
+    // Listings not yet loaded — navigate and let DOMContentLoaded handle it
+    window.location.href = `/product/${listingId}`;
+  }
+}
+
+function ppSwitchImg(src, thumbEl) {
+  document.getElementById('pp-main-img').src = src;
+  document.querySelectorAll('.product-page-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+}
+
+async function ppShare() {
+  const title = document.getElementById('pp-title').textContent;
+  const url   = window.location.href;
+  const shareData = { title, text: `Check out this handmade concrete piece from Croi Concrete: ${title}`, url };
+  const btn = document.querySelector('.product-page-btn-secondary');
+  try {
+    if (navigator.share) { await navigator.share(shareData); }
+    else {
+      await navigator.clipboard.writeText(url);
+      const orig = btn.textContent;
+      btn.textContent = 'Link copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    }
+  } catch(e) {}
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', (e) => {
+  const match = window.location.pathname.match(/^\/product\/(\d+)/);
+  if (match) {
+    if (allListings.length > 0) { showProductPage(parseInt(match[1])); }
+  } else {
+    showShop(null);
+  }
+});
+
+// ── CACHE FRESHNESS ──
+// Bust CF edge cache once per hour by appending an hour-bucket param.
+// functions/listings.js is NOT touched — we just vary the URL so CF
+// treats it as a new request after each hour boundary.
+const LISTINGS_API_URL = (() => {
+  const hourBucket = Math.floor(Date.now() / (1000 * 60 * 60));
+  return `${LISTINGS_API}?v=${hourBucket}`;
+})();
 </script>
 </body>
 </html>
