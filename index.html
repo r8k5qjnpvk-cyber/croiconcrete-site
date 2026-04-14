@@ -708,6 +708,15 @@
           </div>
         </div>
         <button class="product-page-btn-primary" id="pp-add-cart-btn" onclick="addToCart()">Add to Basket</button>
+        <!-- Notify me — shown only when sold out -->
+        <div id="pp-notify-wrap" style="display:none;">
+          <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--concrete);margin-bottom:0.6rem;">This item is sold out — get notified when it's back:</div>
+          <div style="display:flex;gap:0.5rem;">
+            <input type="email" id="pp-notify-email" placeholder="your@email.com" style="flex:1;padding:0.6rem 0.8rem;border:1px solid var(--light-stone);border-radius:2px;font-family:'Lato',sans-serif;font-size:0.82rem;color:var(--text);outline:none;">
+            <button onclick="submitNotifyMe()" style="background:var(--dark);color:var(--cream);border:none;padding:0.6rem 1.2rem;font-family:'Lato',sans-serif;font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;border-radius:2px;cursor:pointer;white-space:nowrap;">Notify Me</button>
+          </div>
+          <div id="pp-notify-msg" style="font-size:0.75rem;color:var(--accent);margin-top:0.4rem;display:none;"></div>
+        </div>
         <a id="pp-etsy-btn" href="#" target="_blank" rel="noopener" class="product-page-btn-secondary">Buy directly on Etsy →</a>
         <button class="product-page-btn-secondary" onclick="ppShare()">Share this product</button>
         <a href="/#shop" onclick="showShop(event)" class="product-page-btn-secondary">← Back to Shop</a>
@@ -1661,6 +1670,15 @@ function showProductPage(listingId) {
   const img   = getImage(listing);
   const price = formatPrice(listing);
   const qty   = listing.quantity ?? null;
+  const isSoldOut = qty === 0;
+
+  // Toggle Add to Basket vs Notify Me
+  const addBtn = document.getElementById('pp-add-cart-btn');
+  const notifyWrap = document.getElementById('pp-notify-wrap');
+  const qtyWrap = document.getElementById('pp-qty')?.parentElement?.parentElement;
+  if (addBtn) { addBtn.style.display = isSoldOut ? 'none' : 'block'; }
+  if (notifyWrap) { notifyWrap.style.display = isSoldOut ? 'block' : 'none'; }
+  if (qtyWrap) { qtyWrap.style.display = isSoldOut ? 'none' : 'flex'; }
   const favs  = listing.num_favorers || 0;
   const tags  = listing.tags || [];
 
@@ -1813,8 +1831,7 @@ function navigateToProduct(listingId) {
   }
 }
 
-function ppSwitchImg(src, thumbEl) {
-  document.getElementById('pp-main-img').src = src;
+function ppSwitchImg(src, thumbEl) {  document.getElementById('pp-main-img').src = src;
   document.querySelectorAll('.product-page-thumb').forEach(t => t.classList.remove('active'));
   thumbEl.classList.add('active');
 }
