@@ -28,22 +28,37 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "AboutPage",
-  "url": "https://croiconcrete.co.uk/about",
-  "name": "About Croi Concrete",
-  "description": "Croi Concrete makes handmade concrete homeware in Newcastle upon Tyne.",
-  "publisher": {
-    "@type": "LocalBusiness",
-    "name": "Croi Concrete",
-    "url": "https://croiconcrete.co.uk",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Newcastle upon Tyne",
-      "addressRegion": "Tyne and Wear",
-      "addressCountry": "GB"
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "url": "https://croiconcrete.co.uk/about",
+      "name": "About Croi Concrete",
+      "description": "Croi Concrete makes handmade concrete homeware in Newcastle upon Tyne.",
+      "publisher": {
+        "@type": "LocalBusiness",
+        "name": "Croi Concrete",
+        "url": "https://croiconcrete.co.uk",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Newcastle upon Tyne",
+          "addressRegion": "Tyne and Wear",
+          "addressCountry": "GB"
+        },
+        "sameAs": ["https://www.etsy.com/shop/CroiConcrete","https://www.instagram.com/croiconcrete"]
+      }
     },
-    "sameAs": ["https://www.etsy.com/shop/CroiConcrete","https://www.instagram.com/croiconcrete"]
-  }
+    {
+      "@type": "HowTo",
+      "name": "How Croi Concrete Makes Each Piece",
+      "description": "The hand-pouring process used to make all Croi Concrete homeware in Newcastle upon Tyne.",
+      "step": [
+        {"@type":"HowToStep","position":1,"name":"The Mix","text":"A fine-aggregate concrete mix is prepared with a carefully controlled water-to-cement ratio. The recipe took months to develop."},
+        {"@type":"HowToStep","position":2,"name":"The Pour","text":"Concrete is poured into moulds immediately after mixing. Each mould is tapped to remove air bubbles, then left to set for 24–48 hours."},
+        {"@type":"HowToStep","position":3,"name":"The Demould","text":"Moulds are carefully removed to reveal each unique piece. Subtle variations in colour and texture make every item one of a kind."},
+        {"@type":"HowToStep","position":4,"name":"Finishing by Hand","text":"Each piece is sanded through several grades by hand, then sealed where appropriate before leaving the Newcastle studio."}
+      ]
+    }
+  ]
 }
 </script>
 <!-- Google Analytics 4 -->

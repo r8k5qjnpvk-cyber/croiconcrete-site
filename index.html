@@ -476,7 +476,14 @@
   .product-page-breadcrumb a:hover{color:var(--dark);}
   .product-page-breadcrumb span{margin:0 0.5rem;}
   .product-page-gallery{}
-  .product-page-main-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;background:var(--light-stone);display:block;margin-bottom:0.75rem;}
+  .product-page-main-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;background:var(--light-stone);display:block;margin-bottom:0.75rem;cursor:zoom-in;transition:opacity 0.2s;}
+  .product-page-main-img:hover{opacity:0.92;}
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(42,37,32,0.92);z-index:600;display:none;align-items:center;justify-content:center;padding:2rem;cursor:zoom-out;backdrop-filter:blur(4px);}
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:3px;}
+  .lightbox-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;color:var(--cream);font-size:1.8rem;cursor:pointer;line-height:1;opacity:0.7;transition:opacity 0.2s;}
+  .lightbox-close:hover{opacity:1;}
   .product-page-thumbs{display:flex;gap:0.5rem;flex-wrap:wrap;}
   .product-page-thumb{width:64px;height:64px;object-fit:cover;border-radius:2px;cursor:pointer;opacity:0.55;border:2px solid transparent;transition:opacity 0.2s,border-color 0.2s;}
   .product-page-thumb:hover,.product-page-thumb.active{opacity:1;border-color:var(--accent);}
@@ -545,6 +552,7 @@
 </nav>
 
 <main>
+<h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Croi Concrete — Handmade Concrete Planters, Coasters &amp; Homeware | Newcastle upon Tyne</h1>
 <section class="hero" aria-label="Hero">
   <div class="hero-text">
     <h2>Made by hand,<br><em>built to last.</em></h2>
@@ -844,6 +852,12 @@
     <div class="post-content" id="post-content"></div>
     <a href="#shop" class="post-cta" onclick="closePost()">Shop the Collection →</a>
   </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close image">✕</button>
+  <img id="lightbox-img" src="" alt="">
 </div>
 
 <!-- Cookie consent banner -->
@@ -1260,7 +1274,7 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   renderBlog();
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); closePost(); }
+    if (e.key === 'Escape') { closeModal(); closePost(); closeLightbox(); }
   });
 });
 
@@ -1696,6 +1710,7 @@ function showProductPage(listingId) {
   }
   document.getElementById('pp-main-img').src  = img || '';
   document.getElementById('pp-main-img').alt  = `${title} — handcrafted concrete homeware by Croi Concrete`;
+  document.getElementById('pp-main-img').onclick = () => openLightbox(document.getElementById('pp-main-img').src, title);
   document.getElementById('pp-etsy-btn').href = listing.url || ETSY_SHOP;
 
   // Category tag
@@ -1831,9 +1846,55 @@ function navigateToProduct(listingId) {
   }
 }
 
-function ppSwitchImg(src, thumbEl) {  document.getElementById('pp-main-img').src = src;
+function ppSwitchImg(src, thumbEl) {
+  const mainImg = document.getElementById('pp-main-img');
+  mainImg.src = src;
+  mainImg.onclick = () => openLightbox(src, mainImg.alt);
   document.querySelectorAll('.product-page-thumb').forEach(t => t.classList.remove('active'));
   thumbEl.classList.add('active');
+}
+
+function openLightbox(src, alt) {
+  const lb  = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  if (!lb || !img) return;
+  img.src = src;
+  img.alt = alt || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function submitNotifyMe() {
+  const emailEl = document.getElementById('pp-notify-email');
+  const msgEl   = document.getElementById('pp-notify-msg');
+  const email   = emailEl?.value?.trim() || '';
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (msgEl) { msgEl.textContent = 'Please enter a valid email address.'; msgEl.style.display = 'block'; msgEl.style.color = '#c0392b'; }
+    return;
+  }
+  try {
+    await fetch('https://formspree.io/f/xaqaybyq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        email,
+        subject: 'Back-in-stock request',
+        product: window._currentProductListing?.title || '',
+        listing_id: window._currentProductListing?.listing_id || '',
+        _source: 'notify-me'
+      })
+    });
+  } catch(e) { /* silent — always show success */ }
+  if (msgEl) { msgEl.textContent = '✓ We\'ll email you when this is back in stock.'; msgEl.style.display = 'block'; msgEl.style.color = 'var(--accent)'; }
+  if (emailEl) emailEl.value = '';
+  if (typeof gtag !== 'undefined') gtag('event', 'notify_me', { listing_id: window._currentProductListing?.listing_id });
 }
 
 async function ppShare() {
