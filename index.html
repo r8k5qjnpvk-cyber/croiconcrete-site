@@ -615,27 +615,39 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials">
+<section class="testimonials" itemscope itemtype="https://schema.org/LocalBusiness" itemid="https://croiconcrete.co.uk/#business">
   <h3>What Our Customers Say</h3>
   <div class="testimonial-grid">
-    <div class="testimonial-card">
-      <div class="testimonial-stars">★★★★★</div>
-      <div class="testimonial-text">"Absolutely love my concrete planter. The quality is outstanding and it looks amazing on my desk. Worth every penny."</div>
-      <div class="testimonial-author">Sarah M. — Verified Etsy buyer<span class="testimonial-verified">✓</span></div>
+    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
+      </div>
+      <div class="testimonial-text" itemprop="reviewBody">"Absolutely love my concrete planter. The quality is outstanding and it looks amazing on my desk. Worth every penny."</div>
+      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+        <span itemprop="name">Sarah M.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
+      </div>
     </div>
-    <div class="testimonial-card">
-      <div class="testimonial-stars">★★★★★</div>
-      <div class="testimonial-text">"Beautiful handmade pieces with real character. You can tell each one is made with care. Packaged beautifully too. Highly recommend!"</div>
-      <div class="testimonial-author">James L. — Verified Etsy buyer<span class="testimonial-verified">✓</span></div>
+    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
+      </div>
+      <div class="testimonial-text" itemprop="reviewBody">"Beautiful handmade pieces with real character. You can tell each one is made with care. Packaged beautifully too. Highly recommend!"</div>
+      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+        <span itemprop="name">James L.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
+      </div>
     </div>
-    <div class="testimonial-card">
-      <div class="testimonial-stars">★★★★★</div>
-      <div class="testimonial-text">"Bought a set of coasters as a gift and my friend was thrilled. Such unique pieces that you won't find anywhere else."</div>
-      <div class="testimonial-author">Emma R. — Verified Etsy buyer<span class="testimonial-verified">✓</span></div>
+    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
+      </div>
+      <div class="testimonial-text" itemprop="reviewBody">"Bought a set of coasters as a gift and my friend was thrilled. Such unique pieces that you won't find anywhere else."</div>
+      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+        <span itemprop="name">Emma R.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
+      </div>
     </div>
   </div>
   <div class="testimonials-footer">
-    <a href="https://www.etsy.com/shop/CroiConcrete#reviews" target="_blank" rel="noopener">Read all reviews on Etsy →</a>
+    <a href="https://www.etsy.com/shop/CroiConcrete#reviews" target="_blank" rel="noopener noreferrer">Read all reviews on Etsy →</a>
   </div>
 </section>
 
@@ -655,7 +667,7 @@
   <h3>Join the Concrete Community</h3>
   <p>New releases, studio updates, and concrete care tips delivered monthly</p>
   <form class="newsletter-form" onsubmit="handleNewsletter(event)">
-    <input type="email" id="newsletter-email" placeholder="your@email.com" required>
+    <input type="email" id="newsletter-email" placeholder="your@email.com" required autocomplete="email">
     <button type="submit">Subscribe</button>
   </form>
   <div class="newsletter-success" id="newsletter-success">✓ Thanks for subscribing! Check your email to confirm.</div>
@@ -746,8 +758,8 @@
       <a href="/" class="footer-logo">Croi Concrete</a>
       <p>Handcrafted concrete homeware made with care in Newcastle upon Tyne. Every piece individually hand-poured, sanded and finished.</p>
       <div class="footer-social">
-        <a href="https://www.instagram.com/croiconcrete" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener">Etsy Shop</a>
+        <a href="https://www.instagram.com/croiconcrete" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener noreferrer">Etsy Shop</a>
       </div>
     </div>
     <div class="footer-col">
@@ -1247,6 +1259,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // Set copyright year
   const fyEl = document.getElementById('footer-year');
   if (fyEl) fyEl.textContent = new Date().getFullYear();
+
+  // Back-to-top visibility
+  const btt = document.getElementById('back-to-top');
+  if (btt) {
+    window.addEventListener('scroll', () => {
+      btt.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+  }
 
   // Cookie banner
   if (localStorage.getItem('cookie_choice')) {

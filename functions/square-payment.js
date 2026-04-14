@@ -1,4 +1,15 @@
 export async function onRequest(context) {
+  // CORS preflight
+  if (context.request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }
+    });
+  }
+
   if (context.request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
@@ -11,6 +22,11 @@ export async function onRequest(context) {
   catch { return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 }); }
 
   const { sourceId, amount, currency = 'GBP', note, buyerEmail } = body;
+
+  // Guard: reject zero or missing amounts
+  if (!sourceId || !amount || amount <= 0) {
+    return new Response(JSON.stringify({ error: 'Invalid payment details' }), { status: 400 });
+  }
 
   try {
     const res = await fetch('https://connect.squareup.com/v2/payments', {
@@ -37,6 +53,9 @@ export async function onRequest(context) {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+    });
   }
 }
