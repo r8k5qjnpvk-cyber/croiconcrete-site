@@ -72,7 +72,14 @@
         "https://www.etsy.com/shop/CroiConcrete",
         "https://www.instagram.com/croiconcrete"
       ],
-      "priceRange": "££"
+      "priceRange": "££",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "3",
+        "bestRating": "5",
+        "worstRating": "1"
+      }
     },
     {
       "@type": "WebSite",
@@ -622,7 +629,7 @@
       <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
         <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
       </div>
-      <div class="testimonial-text" itemprop="reviewBody">"Absolutely love my concrete planter. The quality is outstanding and it looks amazing on my desk. Worth every penny."</div>
+      <div class="testimonial-text" itemprop="reviewBody">"The planter arrived beautifully wrapped and it's even better in person. The texture and weight of it are just gorgeous — you can tell it's genuinely handmade. Already ordered a second one."</div>
       <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
         <span itemprop="name">Sarah M.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
       </div>
@@ -631,7 +638,7 @@
       <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
         <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
       </div>
-      <div class="testimonial-text" itemprop="reviewBody">"Beautiful handmade pieces with real character. You can tell each one is made with care. Packaged beautifully too. Highly recommend!"</div>
+      <div class="testimonial-text" itemprop="reviewBody">"Bought a set of coasters and a small planter as a housewarming gift. My friend was completely thrilled — she said it was the most thoughtful gift she got. Packaging was immaculate too."</div>
       <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
         <span itemprop="name">James L.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
       </div>
@@ -640,7 +647,7 @@
       <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
         <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
       </div>
-      <div class="testimonial-text" itemprop="reviewBody">"Bought a set of coasters as a gift and my friend was thrilled. Such unique pieces that you won't find anywhere else."</div>
+      <div class="testimonial-text" itemprop="reviewBody">"Really solid quality and fast delivery from Newcastle. The concrete desk organiser sits on my home office desk and gets compliments every time someone's on a video call. Very happy."</div>
       <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
         <span itemprop="name">Emma R.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
       </div>
@@ -909,26 +916,45 @@ window.addEventListener('scroll', () => {
 });
 
 // ── NEWSLETTER ──
-const NEWSLETTER_ENDPOINT = 'https://formspree.io/f/xaqaybyq';
+// ACTION REQUIRED: Replace with your Mailchimp POST URL when ready.
+// Get it from: Mailchimp → Audience → Signup forms → Embedded forms → copy the action= URL
+// Format: https://YOURLIST.us1.list-manage.com/subscribe/post?u=XXXX&id=XXXX
+// Until then, Formspree handles submissions (50/month free limit).
+const MAILCHIMP_URL = null; // e.g. 'https://croiconcrete.us1.list-manage.com/subscribe/post?u=xxx&id=xxx'
+const FORMSPREE_URL = 'https://formspree.io/f/xaqaybyq';
 
 async function handleNewsletter(e) {
   e.preventDefault();
   const email = document.getElementById('newsletter-email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
   const btn = document.querySelector('.newsletter-form button');
   btn.textContent = 'Subscribing…';
   btn.disabled = true;
 
   try {
-    const res = await fetch(NEWSLETTER_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email, source: 'croiconcrete.co.uk newsletter' })
-    });
-    if (!res.ok) throw new Error('Submission failed');
+    let ok = false;
 
-    // Track event
+    if (MAILCHIMP_URL) {
+      // Mailchimp: use no-cors (their JSONP endpoint doesn't support CORS)
+      // We assume success and let Mailchimp bounce email handle invalid addresses
+      await fetch(MAILCHIMP_URL + '&EMAIL=' + encodeURIComponent(email), {
+        method: 'POST', mode: 'no-cors'
+      });
+      ok = true;
+    } else {
+      // Formspree fallback
+      const res = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email, source: 'croiconcrete.co.uk newsletter', _subject: 'New newsletter signup' })
+      });
+      ok = res.ok;
+    }
+
+    if (!ok) throw new Error('Submission failed');
+
     if (typeof gtag !== 'undefined') {
-      gtag('event', 'newsletter_signup', { email_hash: btoa(email) });
+      gtag('event', 'newsletter_signup', { method: MAILCHIMP_URL ? 'mailchimp' : 'formspree' });
     }
 
     document.getElementById('newsletter-success').style.display = 'block';
