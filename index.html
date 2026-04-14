@@ -10,6 +10,12 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2a2520">
+<meta name="application-name" content="Croi Concrete">
+<!-- E-E-A-T: rel=me social verification -->
+<link rel="me" href="https://www.etsy.com/shop/CroiConcrete">
+<link rel="me" href="https://www.instagram.com/croiconcrete">
 
 <!-- SEO Meta -->
 <title>Handmade Concrete Planters, Coasters &amp; Homeware | Croi Concrete UK</title>
@@ -543,6 +549,7 @@
   <div class="hero-text">
     <h2>Made by hand,<br><em>built to last.</em></h2>
     <p>Each piece is individually cast in concrete — imperfect by nature, unique by design. Minimal forms for modern homes, handcrafted in Newcastle upon Tyne.</p>
+    <p style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--concrete);margin-top:-0.8rem;">Concrete planters · Coasters · Desk accessories · Gifts</p>
     <div class="hero-ctas">
       <a href="#shop" class="hero-cta">Browse the Collection</a>
       <a href="https://www.etsy.com/shop/CroiConcrete" target="_blank" rel="noopener" class="hero-cta-secondary">View on Etsy →</a>
@@ -692,6 +699,14 @@
         <div><div class="product-page-spec-label">Care</div><div class="product-page-spec-val">Hand wash only</div></div>
       </div>
       <div class="product-page-btns">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">
+          <span style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);">Quantity</span>
+          <div style="display:flex;align-items:center;border:1px solid var(--light-stone);border-radius:2px;overflow:hidden;">
+            <button onclick="ppChangeQty(-1)" style="width:36px;height:36px;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--dark);transition:background 0.2s;" onmouseover="this.style.background='var(--light-stone)'" onmouseout="this.style.background='none'">−</button>
+            <span id="pp-qty" style="width:40px;text-align:center;font-size:0.9rem;color:var(--dark);">1</span>
+            <button onclick="ppChangeQty(1)" style="width:36px;height:36px;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--dark);transition:background 0.2s;" onmouseover="this.style.background='var(--light-stone)'" onmouseout="this.style.background='none'">+</button>
+          </div>
+        </div>
         <button class="product-page-btn-primary" id="pp-add-cart-btn" onclick="addToCart()">Add to Basket</button>
         <a id="pp-etsy-btn" href="#" target="_blank" rel="noopener" class="product-page-btn-secondary">Buy directly on Etsy →</a>
         <button class="product-page-btn-secondary" onclick="ppShare()">Share this product</button>
@@ -1637,6 +1652,9 @@ function showProductPage(listingId) {
   const listing = (window._listings || allListings).find(l => l.listing_id == listingId);
   if (!listing) return;
   window._currentProductListing = listing; // for addToCart()
+  // Reset quantity selector
+  const qtyEl = document.getElementById('pp-qty');
+  if (qtyEl) qtyEl.textContent = '1';
 
   // Populate content
   const title = listing.title || '';
@@ -1853,22 +1871,31 @@ function updateCartCount() {
   el.classList.toggle('show', total > 0);
 }
 
+function ppChangeQty(delta) {
+  const el = document.getElementById('pp-qty');
+  if (!el) return;
+  const current = parseInt(el.textContent) || 1;
+  el.textContent = Math.max(1, Math.min(10, current + delta));
+}
+
 function addToCart() {
   if (!currentListing && !window._currentProductListing) return;
   const listing = currentListing || window._currentProductListing;
   const img = getImage(listing);
   const price = listing.price ? (listing.price.amount / (listing.price.divisor || 100)) : 0;
+  const qtyEl = document.getElementById('pp-qty');
+  const qty = qtyEl ? (parseInt(qtyEl.textContent) || 1) : 1;
 
   const existing = _cart.find(i => i.id === listing.listing_id);
   if (existing) {
-    existing.qty = (existing.qty || 1) + 1;
+    existing.qty = (existing.qty || 0) + qty;
   } else {
     _cart.push({
       id: listing.listing_id,
       title: listing.title || '',
       price,
       image: img || '',
-      qty: 1,
+      qty,
       url: listing.url || ''
     });
   }
