@@ -2,6 +2,11 @@ User-agent: *
 Allow: /
 Disallow: /functions/
 Disallow: /*.sh$
+Disallow: /*.md$
+Disallow: /index-backup-*
+Disallow: /checkout
+Disallow: /404.html
+Disallow: /og-image-template.html
 
 # Sitemap
 Sitemap: https://croiconcrete.co.uk/sitemap.xml

@@ -140,6 +140,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://i.etsystatic.com">
 <link rel="preconnect" href="https://web.squarecdn.com">
+<link rel="preconnect" href="https://formspree.io">
 <link rel="dns-prefetch" href="https://connect.squareup.com">
 
 <!-- Font loading optimization -->
@@ -513,16 +514,6 @@
     .product-page-specs{grid-template-columns:1fr;}
   }
 </style>
-
-<!-- Google Analytics 4 -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EG7F5SYGCM"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-EG7F5SYGCM');
-</script>
 
 <!-- Cloudflare Web Analytics — add beacon token here when ready -->
 </head>
@@ -1997,6 +1988,12 @@ function addToCart() {
 }
 
 function goToCheckout() {
+  if (!_cart.length) {
+    // Scroll to shop rather than sending them to an empty checkout
+    const shopEl = document.getElementById('shop');
+    if (shopEl) shopEl.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
   window.location.href = '/checkout';
 }
 </script>

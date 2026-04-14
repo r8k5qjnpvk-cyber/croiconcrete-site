@@ -407,6 +407,7 @@ function renderShipping() {
 function selectShipping(id) {
   selectedShipping = SHIPPING_OPTIONS.find(o => o.id === id) || null;
   renderSummary();
+  updatePayBtn();
 }
 
 function validateStep1() {
@@ -444,7 +445,7 @@ function goToStep(n) {
     t.classList.toggle('done', i+1 < n);
   });
 
-  if (n === 3) initSquare();
+  if (n === 3) { initSquare(); updatePayBtn(); }
   renderSummary();
 }
 
@@ -559,13 +560,12 @@ document.getElementById('country').addEventListener('change', () => {
 });
 loadCart();
 
-// Update pay button text with total
+// Update pay button text with total — called whenever cart or shipping changes
 function updatePayBtn() {
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0) + (selectedShipping?.price||0);
   const btn = document.getElementById('pay-btn');
   if (btn && total > 0) btn.textContent = `Pay £${total.toFixed(2)}`;
 }
-setInterval(updatePayBtn, 500);
 </script>
 </body>
 </html>
