@@ -4,7 +4,20 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com https://web.squarecdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' https://i.etsystatic.com https://*.etsystatic.com data: blob:; connect-src 'self' https://connect.squareup.com https://www.google-analytics.com https://analytics.google.com https://static.cloudflareinsights.com; frame-src https://web.squarecdn.com; object-src 'none'; base-uri 'self';
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com https://web.squarecdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' https://i.etsystatic.com https://*.etsystatic.com data: blob:; connect-src 'self' https://connect.squareup.com https://www.google-analytics.com https://analytics.google.com https://static.cloudflareinsights.com https://formspree.io; frame-src https://web.squarecdn.com; object-src 'none'; base-uri 'self';
+
+# Block public access to shell scripts, markdown docs, backup HTMLs, config files
+/*.sh
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/*.md
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/index-backup-*.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
 
 /*.css
   Cache-Control: public, max-age=31536000, immutable

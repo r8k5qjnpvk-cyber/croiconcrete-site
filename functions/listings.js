@@ -17,7 +17,7 @@ export async function onRequest(context) {
   // Etsy v3 requires keystring:sharedSecret format
   const apiKey  = `${keystring}:${sharedSecret}`;
   const headers = { 'x-api-key': apiKey };
-  const CACHE_TTL = 300;
+  const CACHE_TTL = 1200; // 20 minutes — reduces Etsy API calls without stale data risk
 
   // Handle CORS preflight
   if (context.request.method === 'OPTIONS') {
