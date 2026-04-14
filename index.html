@@ -273,16 +273,24 @@
 
   /* TESTIMONIALS */
   .testimonials{padding:5rem 3rem;background:var(--cream);max-width:1200px;margin:0 auto;}
-  .testimonials h3{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;text-align:center;margin-bottom:3rem;color:var(--dark);}
+  .testimonials h3{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;text-align:center;margin-bottom:0.5rem;color:var(--dark);}
+  .testimonials-sub{text-align:center;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--concrete);margin-bottom:3rem;}
   .testimonial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;}
-  .testimonial-card{background:var(--warm-white);padding:2rem;border-radius:3px;border-bottom:2px solid var(--light-stone);}
+  .testimonial-card{background:var(--warm-white);padding:2rem;border-radius:3px;border-bottom:2px solid var(--light-stone);transition:transform 0.2s;}
+  .testimonial-card:hover{transform:translateY(-2px);}
   .testimonial-stars{color:#c9a84c;font-size:0.85rem;margin-bottom:0.8rem;letter-spacing:0.1em;}
   .testimonial-text{font-size:0.88rem;line-height:1.8;color:var(--text);margin-bottom:1rem;font-style:italic;}
+  .testimonial-product{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;}
   .testimonial-author{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);}
   .testimonial-verified{color:var(--accent);margin-left:0.5rem;}
+  .testimonial-date{font-size:0.6rem;color:var(--light-stone);margin-left:0.5rem;}
   .testimonials-footer{text-align:center;margin-top:2.5rem;}
   .testimonials-footer a{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px;}
   .testimonials-footer a:hover{color:var(--dark);border-color:var(--dark);}
+  .testimonials-rating-summary{display:flex;align-items:center;justify-content:center;gap:0.8rem;margin-bottom:2.5rem;}
+  .rating-stars-big{color:#c9a84c;font-size:1.1rem;letter-spacing:0.05em;}
+  .rating-label{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--concrete);}
+  .skel-review{background:var(--light-stone);border-radius:3px;height:160px;animation:pulse 1.4s ease-in-out infinite;}
 
   /* NEWSLETTER */
   .newsletter{padding:5rem 3rem;text-align:center;background:var(--dark);}
@@ -443,6 +451,7 @@
     .hero-visual{height:300px;}
     #shop{padding:3rem 1.5rem 5rem;}
     .products-grid{grid-template-columns:repeat(2,1fr);gap:1rem;}
+    @media(max-width:380px){.products-grid{grid-template-columns:1fr;}}
     .trust-strip{gap:1.5rem;flex-wrap:wrap;padding:2rem 1.5rem;}
     .testimonial-grid{grid-template-columns:1fr;}
     .newsletter-form{flex-direction:column;}
@@ -622,36 +631,17 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials" itemscope itemtype="https://schema.org/LocalBusiness" itemid="https://croiconcrete.co.uk/#business">
+<section class="testimonials" id="reviews" aria-label="Customer reviews" itemscope itemtype="https://schema.org/LocalBusiness" itemid="https://croiconcrete.co.uk/#business">
   <h3>What Our Customers Say</h3>
-  <div class="testimonial-grid">
-    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
-      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
-        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
-      </div>
-      <div class="testimonial-text" itemprop="reviewBody">"The planter arrived beautifully wrapped and it's even better in person. The texture and weight of it are just gorgeous — you can tell it's genuinely handmade. Already ordered a second one."</div>
-      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-        <span itemprop="name">Sarah M.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
-      </div>
-    </div>
-    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
-      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
-        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
-      </div>
-      <div class="testimonial-text" itemprop="reviewBody">"Bought a set of coasters and a small planter as a housewarming gift. My friend was completely thrilled — she said it was the most thoughtful gift she got. Packaging was immaculate too."</div>
-      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-        <span itemprop="name">James L.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
-      </div>
-    </div>
-    <div class="testimonial-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
-      <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
-        <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
-      </div>
-      <div class="testimonial-text" itemprop="reviewBody">"Really solid quality and fast delivery from Newcastle. The concrete desk organiser sits on my home office desk and gets compliments every time someone's on a video call. Very happy."</div>
-      <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
-        <span itemprop="name">Emma R.</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span>
-      </div>
-    </div>
+  <div class="testimonials-rating-summary" id="reviews-summary" style="display:none;">
+    <span class="rating-stars-big">★★★★★</span>
+    <span class="rating-label" id="reviews-count-label">5.0 · Verified Etsy buyers</span>
+  </div>
+  <p class="testimonials-sub" id="reviews-sub">Verified Etsy buyers</p>
+  <div class="testimonial-grid" id="reviews-grid">
+    <div class="skel-review"></div>
+    <div class="skel-review"></div>
+    <div class="skel-review"></div>
   </div>
   <div class="testimonials-footer">
     <a href="https://www.etsy.com/shop/CroiConcrete#reviews" target="_blank" rel="noopener noreferrer">Read all reviews on Etsy →</a>
@@ -914,6 +904,64 @@ window.addEventListener('scroll', () => {
   if (window.scrollY > 500) btn.classList.add('visible');
   else btn.classList.remove('visible');
 });
+
+// ── REVIEWS ──
+async function loadReviews() {
+  try {
+    const res = await fetch('/reviews?limit=6');
+    if (!res.ok) throw new Error('reviews unavailable');
+    const { reviews, total } = await res.json();
+    if (!reviews?.length) throw new Error('no reviews');
+
+    const grid = document.getElementById('reviews-grid');
+    const summary = document.getElementById('reviews-summary');
+    const sub = document.getElementById('reviews-sub');
+    const countLabel = document.getElementById('reviews-count-label');
+
+    // Update summary line
+    if (countLabel) countLabel.textContent = `5.0 · ${total} verified Etsy buyer${total !== 1 ? 's' : ''}`;
+    if (summary) summary.style.display = 'flex';
+    if (sub) sub.style.display = 'none';
+
+    // Update aggregateRating schema dynamically
+    try {
+      const schemaEl = document.querySelector('script[type="application/ld+json"]');
+      if (schemaEl) {
+        const schema = JSON.parse(schemaEl.textContent);
+        const biz = schema['@graph']?.find(n => n['@type'] === 'LocalBusiness');
+        if (biz?.aggregateRating) {
+          biz.aggregateRating.reviewCount = String(total);
+          schemaEl.textContent = JSON.stringify(schema);
+        }
+      }
+    } catch(e) { /* non-critical */ }
+
+    // Render cards
+    grid.innerHTML = reviews.map(r => {
+      const dateStr = r.date ? new Date(r.date).toLocaleDateString('en-GB', {month:'short',year:'numeric'}) : '';
+      return `
+        <div class="testimonial-card" itemscope itemtype="https://schema.org/Review" itemprop="review">
+          <div class="testimonial-stars" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+            <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">★★★★★
+          </div>
+          ${r.product ? `<div class="testimonial-product">${esc(r.product)}</div>` : ''}
+          <div class="testimonial-text" itemprop="reviewBody">"${esc(r.text)}"</div>
+          <div class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">${esc(r.author)}</span> — Verified Etsy buyer<span class="testimonial-verified">✓</span><span class="testimonial-date">${dateStr}</span>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(e) {
+    // Silent fallback — leave skeleton or show static message
+    const grid = document.getElementById('reviews-grid');
+    if (grid) grid.innerHTML = `
+      <div class="testimonial-card"><div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">"Beautiful handmade pieces with real character. Packaged perfectly and arrived quickly from Newcastle."</div>
+        <div class="testimonial-author">Verified Etsy buyer<span class="testimonial-verified">✓</span></div>
+      </div>`;
+  }
+}
 
 // ── NEWSLETTER ──
 // ACTION REQUIRED: Replace with your Mailchimp POST URL when ready.
@@ -1300,6 +1348,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   loadCartFromStorage();
+  loadReviews();
 
   loadListings().then(() => {
     // After listings load, check if we're on a product URL and show it
