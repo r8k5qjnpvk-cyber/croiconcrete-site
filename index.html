@@ -576,6 +576,7 @@
   </button>
   <ul class="nav-links" id="nav-links">
     <li><a href="#shop" onclick="closeNav()">Shop</a></li>
+    <li><a href="/journal">Journal</a></li>
     <li><a href="/about">About</a></li>
     <li><a href="#blog" onclick="closeNav()">Journal</a></li>
     <li><a href="#contact" onclick="closeNav()">Contact</a></li>
@@ -713,7 +714,7 @@
   <div class="blog-inner">
     <div class="blog-header">
       <h3 class="blog-title">The Concrete Journal</h3>
-      <span style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);">Making · Care · Inspiration</span>
+      <a href="/journal" style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--concrete);text-decoration:none;">View all →</a>
     </div>
     <div class="blog-grid" id="blog-grid"></div>
   </div>
@@ -834,7 +835,8 @@
       <h4>Info</h4>
       <ul>
         <li><a href="/about">About us</a></li>
-        <li><a href="#blog">Journal</a></li>
+        <li><a href="/journal">Journal</a></li>
+        <li><a href="#blog">Blog</a></li>
         <li><a href="#contact">Contact us</a></li>
         <li><a href="/shipping-returns">Shipping &amp; returns</a></li>
         <li><a href="/privacy-policy">Privacy policy</a></li>
@@ -1328,9 +1330,19 @@ const POSTS = [
 
 // ── RENDER BLOG ──
 function renderBlog() {
+  const SLUGS = {
+    1: 'how-we-make-concrete-homeware',
+    2: 'how-to-care-for-concrete-homeware',
+    3: '5-unique-concrete-gifts',
+    4: 'concrete-homeware-in-every-room',
+    5: 'made-in-newcastle',
+    6: 'is-concrete-sustainable',
+    7: 'concrete-planters-vs-ceramic-planters',
+    8: 'buying-handmade-gifts-uk',
+  };
   const grid = document.getElementById('blog-grid');
   grid.innerHTML = POSTS.map(post => `
-    <article class="blog-card" onclick="openPost(${post.id})" role="button" tabindex="0"
+    <article class="blog-card" onclick="window.location='/journal/${SLUGS[post.id] || ''}'" role="button" tabindex="0"
       aria-label="Read: ${post.title}"
       itemscope itemtype="https://schema.org/BlogPosting">
       <div class="blog-card-img">
@@ -1342,7 +1354,7 @@ function renderBlog() {
         <p class="blog-card-excerpt" itemprop="description">${post.excerpt}</p>
         <meta itemprop="datePublished" content="${post.date}">
         <div class="blog-card-meta">${post.dateDisplay}</div>
-        <br><span class="blog-read-more">Read more →</span>
+        <br><a href="/journal/${SLUGS[post.id] || ''}" class="blog-read-more" onclick="event.stopPropagation()">Read more →</a>
       </div>
     </article>
   `).join('');
