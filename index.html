@@ -19,7 +19,7 @@
 
 <!-- SEO Meta -->
 <title>Handmade Concrete Homeware UK | Planters, Coasters &amp; Gifts | Croi Concrete Newcastle</title>
-<meta name="description" content="Buy handmade concrete homeware crafted in Newcastle upon Tyne. Concrete planters, coasters, desk organisers and unique gifts — each piece individually hand-poured. Free UK delivery on orders over £50.">
+<meta name="description" content="Buy handmade concrete homeware crafted in Newcastle upon Tyne. Concrete planters, coasters, desk organisers and unique gifts — each piece individually hand-poured. Free UK delivery.">
 <meta name="keywords" content="handmade concrete homeware, concrete gifts UK, concrete planters, concrete coasters, handmade gifts Newcastle, unique homeware gifts, concrete desk organiser, buy concrete homeware">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://croiconcrete.co.uk/">
@@ -128,7 +128,7 @@
     {
       "@type": "Question",
       "name": "How long does delivery take for Croi Concrete homeware?",
-      "acceptedAnswer": {"@type": "Answer", "text": "We aim to dispatch within 3-5 working days. UK delivery typically takes 1-3 working days after dispatch. All orders are carefully packaged to protect your piece in transit. Free UK delivery is available on orders over £50."}
+      "acceptedAnswer": {"@type": "Answer", "text": "We aim to dispatch within 3-5 working days. UK standard delivery (free) typically takes 3-5 working days. UK express (£2.50) takes 1-2 working days. Worldwide shipping (£10) takes 7-14 working days. All orders are carefully packaged to protect your piece in transit."}
     },
     {
       "@type": "Question",
@@ -158,7 +158,7 @@
     {
       "@type": "Question",
       "name": "Do you offer free UK delivery on concrete homeware?",
-      "acceptedAnswer": {"@type": "Answer", "text": "Yes, we offer free UK delivery on orders over £50. Standard UK delivery starts from £3.95. We dispatch from Newcastle upon Tyne using Royal Mail."}
+      "acceptedAnswer": {"@type": "Answer", "text": "Yes! We offer free UK standard delivery. UK express delivery is £2.50. Worldwide shipping is £10. We dispatch from Newcastle upon Tyne using Royal Mail."}
     },
     {
       "@type": "Question",
@@ -617,7 +617,7 @@
 <div class="strip">
   <span class="strip-text">Croi Concrete</span><span class="strip-dot"></span>
   <span class="strip-text">Handmade in Newcastle</span><span class="strip-dot"></span>
-  <span class="strip-text">Free UK Delivery Available</span><span class="strip-dot"></span>
+  <span class="strip-text">Free UK Delivery</span><span class="strip-dot"></span>
   <span class="strip-text">Secure Checkout with Square</span>
 </div>
 
@@ -734,7 +734,7 @@
 <section class="about" id="about" aria-label="About Croi Concrete">
   <h2>Made in Newcastle</h2>
   <p>Every piece from Croi Concrete is hand-poured, sanded, and finished in our studio in Newcastle upon Tyne. We work with concrete because it's honest — raw texture, quiet weight, enduring form. No two pieces are exactly alike. Designed for homes that value the handmade, built to last a lifetime.</p>
-  <p style="font-size:0.78rem;color:var(--stone);line-height:1.9;max-width:560px;margin:0 auto 1.5rem;">We make <a href="/concrete-planters" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">handmade concrete planters</a> for indoor plants, <a href="/concrete-coasters" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">concrete coasters</a> sold in sets of four, desk organisers, phone stands, and <a href="/concrete-gifts-uk" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">unique concrete gifts for the UK</a>. Everything ships from Newcastle within 3–5 working days. Free UK delivery on orders over £50.</p>
+  <p style="font-size:0.78rem;color:var(--stone);line-height:1.9;max-width:560px;margin:0 auto 1.5rem;">We make <a href="/concrete-planters" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">handmade concrete planters</a> for indoor plants, <a href="/concrete-coasters" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">concrete coasters</a> sold in sets of four, desk organisers, phone stands, and <a href="/concrete-gifts-uk" style="color:var(--stone);text-decoration:underline;text-underline-offset:3px;">unique concrete gifts for the UK</a>. Everything ships from Newcastle within 3–5 working days. Free UK delivery.</p>
   <div class="about-ctas">
     <a href="#shop" class="about-cta-primary">Shop the Collection</a>
     <a href="/about" class="about-cta-secondary">About the Studio</a>
@@ -1861,10 +1861,7 @@ function showProductPage(listingId) {
   // Price accuracy note — the Etsy API price field IS the current sale price
   const priceNote = document.getElementById('pp-price-note');
   if (priceNote) {
-    const subtotal = listing.price ? (listing.price.amount / (listing.price.divisor || 100)) : 0;
-    priceNote.textContent = subtotal >= 50
-      ? 'Free UK delivery on this order · Price matches Etsy'
-      : 'Price matches Etsy · From £3.95 UK delivery';
+    priceNote.textContent = 'Free UK delivery · Price matches Etsy';
   }
   document.getElementById('pp-main-img').src  = img || '';
   document.getElementById('pp-main-img').alt  = `${title} — handcrafted concrete homeware by Croi Concrete`;
